@@ -10,20 +10,26 @@ export default function Index() {
   const router = useRouter();
 
   const login = () => {
-    LoginService(username, password)
-      .then(() => {
-        router.push('/home');
-      })
-      .catch(() => {
-        Alert.alert('Đăng nhập thất bại');
-      });
+    router.push('/home');
+    // LoginService(username, password)
+    //   .then(() => {
+    //     router.push('/home');
+    //   })
+    //   .catch(() => {
+    //     Alert.alert('Đăng nhập thất bại', 'Tên đăng nhập hoặc mật khẩu không đúng');
+    //   });
   }
 
   return (
     <View
       style={styles.container}
     >
-      <Text style={styles.lableLogin}>Đăng Nhập</Text>
+      <Text style={{
+        fontSize: 36,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: "#0984e3"
+      }}>LEON WARSEHOUSE</Text>
       <TextInput
         style={styles.input}
         onChangeText={setUsername}
@@ -53,11 +59,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#ecf0f1',
   },
   lableLogin: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
   },
   input: {
     width: '100%',
@@ -65,6 +71,7 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
+    borderRadius: 10,
   },
   buttonContainer: {
     width: '100%',
