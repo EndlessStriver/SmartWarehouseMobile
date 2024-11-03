@@ -13,12 +13,11 @@ export default function BarcodeScanner() {
             const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === 'granted');
         })();
-    }, []);
+    }, [scanned]);
 
-    const handleBarCodeScanned = ({ type, data }: { type: string; data: string }) => {
+    const handleBarCodeScanned = ({ data }: { data: string }) => {
         setScanned(true);
         setData(data);
-        alert(`Mã vạch có kiểu ${type} và dữ liệu là: ${data}`);
     };
 
     if (hasPermission === null) {
@@ -31,12 +30,16 @@ export default function BarcodeScanner() {
     return (
         <View style={styles.container}>
             <CameraView
-                style={StyleSheet.absoluteFill}
                 onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+                style={StyleSheet.absoluteFillObject}
             >
                 <View style={styles.overlay}>
                     {scanned && (
-                        <Button title="Quét lại" onPress={() => setScanned(false)} />
+                        <Button title="Quét lại" onPress={() => {
+                            setScanned(false);
+                            setData(null);
+                            setHasPermission(false);
+                        }} />
                     )}
                     {data && <Text style={styles.barcodeData}>Dữ liệu mã vạch: {data}</Text>}
                 </View>
