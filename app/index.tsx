@@ -9,15 +9,28 @@ export default function Index() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
+  const validateForm = () => {
+    if (username === '') {
+      Alert.alert('Lỗi', 'Tên đăng nhập không được để trống');
+      return false;
+    }
+    if (password === '') {
+      Alert.alert('Lỗi', 'Mật khẩu không được để trống');
+      return false;
+    }
+    return true;
+  }
+
   const login = () => {
-    router.push('/home');
-    // LoginService(username, password)
-    //   .then(() => {
-    //     router.push('/home');
-    //   })
-    //   .catch(() => {
-    //     Alert.alert('Đăng nhập thất bại', 'Tên đăng nhập hoặc mật khẩu không đúng');
-    //   });
+    if (validateForm()) {
+      LoginService(username, password)
+        .then(() => {
+          router.push('/home');
+        })
+        .catch(() => {
+          Alert.alert('Đăng nhập thất bại', 'Tên đăng nhập hoặc mật khẩu không đúng');
+        });
+    }
   }
 
   return (
