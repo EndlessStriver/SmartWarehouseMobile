@@ -21,17 +21,18 @@ const Home = () => {
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'center',
         padding: 20,
     },
     buttonfnc: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#3498db',
+        backgroundColor: '#0984e3',
         padding: 10,
         borderRadius: 5,
-        width: 160,
-        height: 160,
+        width: 150,
+        height: 150,
     },
     textButton: {
         color: 'white',
