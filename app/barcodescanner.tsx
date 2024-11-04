@@ -58,8 +58,9 @@ export default function BarcodeScanner() {
                 style={StyleSheet.absoluteFillObject}
             >
                 {
-                    data &&
+                    data && product &&
                     <View style={styles.overlay}>
+                        <Text style={styles.lable1}>Thông tin sản phẩm</Text>
                         <Image
                             style={styles.imageproduct}
                             source={{
@@ -116,15 +117,15 @@ export default function BarcodeScanner() {
                                     keyExtractor={(item) => item.id}
                                 />
                         }
-                        {scanned && (
-                            <Button title="Quét lại" onPress={() => {
-                                setScanned(false);
-                                setData(null);
-                                setHasPermission(false);
-                            }} />
-                        )}
                     </View>
                 }
+                {scanned && (
+                    <Button title="Quét lại" onPress={() => {
+                        setScanned(false);
+                        setData(null);
+                        setHasPermission(false);
+                    }} />
+                )}
             </CameraView>
         </View>
     );
