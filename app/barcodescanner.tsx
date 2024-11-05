@@ -153,11 +153,11 @@ export default function BarcodeScanner() {
                         </View>
                         <View style={styles.containerlable}>
                             <Text style={styles.lable}>Khối lượng chứa tối đa: </Text>
-                            <Text>{Number(location?.maxCapacity).toLocaleString()} cm3</Text>
+                            <Text>{Number(location?.maxWeight).toLocaleString()} kg</Text>
                         </View>
                         <View style={styles.containerlable}>
                             <Text style={styles.lable}>Khối lượng đang sử dụng: </Text>
-                            <Text>{Number(location?.currentCapacity).toLocaleString()} cm3</Text>
+                            <Text>{Number(location?.currentWeight).toLocaleString()} kg</Text>
                         </View>
                         <Text style={styles.lable1}>Thông tin sản phẩm đang chứa</Text>
                         {
@@ -183,7 +183,7 @@ export default function BarcodeScanner() {
                                     </View>
                                     <View style={styles.containerlable}>
                                         <Text style={styles.lable}>Số lượng: </Text>
-                                        <Text>{location.skus.productDetails.quantity} {location.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name}</Text>
+                                        <Text>{location.quantity} {location.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name}</Text>
                                     </View>
                                     <View style={styles.containerlable}>
                                         <Text style={styles.lable}>Trọng lượng: </Text>
