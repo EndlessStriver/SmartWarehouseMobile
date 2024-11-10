@@ -117,6 +117,9 @@ export default function BarcodeScanner() {
                                 <Text style={{ marginBottom: 10 }}>Không có vị trí chứa sản phẩm</Text>
                                 :
                                 <FlatList
+                                    style={{
+                                        width: '100%',
+                                    }}
                                     data={product?.productDetails[0].sku[0].locations}
                                     renderItem={({ item }) => (
                                         <View style={styles.containerlable}>

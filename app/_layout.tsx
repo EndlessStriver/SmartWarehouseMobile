@@ -18,6 +18,7 @@ export default function RootLayout() {
         name="index"
         options={{
           headerShown: false,
+          title: "Đăng nhập",
         }}
       />
       <Stack.Screen
@@ -32,6 +33,34 @@ export default function RootLayout() {
         options={{
           headerShown: true,
           title: "Quét mã vạch",
+        }}
+      />
+      <Stack.Screen
+        name="stockentry"
+        options={{
+          headerShown: true,
+          title: "Nhập kho",
+        }}
+      />
+      <Stack.Screen
+        name="stockentrydetail"
+        options={{
+          headerShown: true,
+          title: "Chi tiết phiếu nhập kho",
+        }}
+      />
+      <Stack.Screen
+        name="warehouse"
+        options={{
+          headerShown: true,
+          title: "Tồn kho",
+        }}
+      />
+      <Stack.Screen
+        name="warehousedetail"
+        options={{
+          headerShown: true,
+          title: "Chi tiết sản phẩm tồn kho",
         }}
       />
     </Stack>

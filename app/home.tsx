@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from "expo-router";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 const Home = () => {
     return (
@@ -11,8 +12,35 @@ const Home = () => {
                     router.push('/barcodescanner')
                 }}
             >
-                <FontAwesome name="search" size={30} color="white" />
-                <Text style={style.textButton}>Tra Cứu</Text>
+                <FontAwesome name="search" size={30} />
+                <Text style={style.textButton}>QR Code</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={style.buttonfnc}
+                onPress={() => {
+                    router.push('/stockentry')
+                }}
+            >
+                <MaterialIcons name="inventory" size={30} />
+                <Text style={style.textButton}>Nhập Kho</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={style.buttonfnc}
+                onPress={() => {
+                    router.push('/stockentry')
+                }}
+            >
+                <MaterialCommunityIcons name="exit-to-app" size={30} />
+                <Text style={style.textButton}>Xuất Kho</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={style.buttonfnc}
+                onPress={() => {
+                    router.push('/warehouse')
+                }}
+            >
+                <MaterialCommunityIcons name="warehouse" size={30} />
+                <Text style={style.textButton}>Tồn Kho</Text>
             </TouchableOpacity>
         </View>
     )
@@ -21,8 +49,10 @@ const Home = () => {
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: "row",
+        flexWrap: 'wrap',
+        gap: 20,
+        justifyContent: 'space-between',
         padding: 20,
     },
     buttonfnc: {
@@ -35,9 +65,10 @@ const style = StyleSheet.create({
         height: 150,
     },
     textButton: {
-        color: 'white',
+        color: 'black',
         fontSize: 20,
         marginTop: 10,
+        fontWeight: 'bold'
     }
 })
 

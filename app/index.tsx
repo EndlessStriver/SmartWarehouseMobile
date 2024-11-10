@@ -27,7 +27,8 @@ export default function Index() {
         .then(() => {
           router.push('/home');
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log(error);
           Alert.alert('Đăng nhập thất bại', 'Tên đăng nhập hoặc mật khẩu không đúng');
         });
     }
