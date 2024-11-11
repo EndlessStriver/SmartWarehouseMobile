@@ -42,6 +42,15 @@ const Home = () => {
                 <MaterialCommunityIcons name="warehouse" size={30} color={"white"} />
                 <Text style={style.textButton}>Tồn Kho</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={style.buttonfnc}
+                onPress={() => {
+                    router.push('/warehouse')
+                }}
+            >
+                <FontAwesome name="clipboard" size={24} color="white" />
+                <Text style={style.textButton}>Kiểm Kê</Text>
+            </TouchableOpacity>
         </View>
     )
 }

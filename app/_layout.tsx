@@ -19,12 +19,14 @@ export default function RootLayout() {
         options={{
           headerShown: false,
           title: "Đăng nhập",
+
         }}
       />
       <Stack.Screen
         name="home"
         options={{
           headerShown: true,
+          headerBackVisible: false,
           title: "Trang chủ",
         }}
       />
