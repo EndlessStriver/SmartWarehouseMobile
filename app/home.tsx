@@ -12,7 +12,7 @@ const Home = () => {
                     router.push('/barcodescanner')
                 }}
             >
-                <FontAwesome name="search" size={30} />
+                <FontAwesome name="search" size={30} color={"white"} />
                 <Text style={style.textButton}>QR Code</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -21,7 +21,7 @@ const Home = () => {
                     router.push('/stockentry')
                 }}
             >
-                <MaterialIcons name="inventory" size={30} />
+                <MaterialIcons name="inventory" size={30} color={"white"} />
                 <Text style={style.textButton}>Nhập Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -30,7 +30,7 @@ const Home = () => {
                     router.push('/stockentry')
                 }}
             >
-                <MaterialCommunityIcons name="exit-to-app" size={30} />
+                <MaterialCommunityIcons name="exit-to-app" size={30} color={"white"} />
                 <Text style={style.textButton}>Xuất Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -39,7 +39,7 @@ const Home = () => {
                     router.push('/warehouse')
                 }}
             >
-                <MaterialCommunityIcons name="warehouse" size={30} />
+                <MaterialCommunityIcons name="warehouse" size={30} color={"white"} />
                 <Text style={style.textButton}>Tồn Kho</Text>
             </TouchableOpacity>
         </View>
@@ -52,7 +52,7 @@ const style = StyleSheet.create({
         flexDirection: "row",
         flexWrap: 'wrap',
         gap: 20,
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         padding: 20,
     },
     buttonfnc: {
@@ -65,10 +65,10 @@ const style = StyleSheet.create({
         height: 150,
     },
     textButton: {
-        color: 'black',
+        color: 'white',
         fontSize: 20,
         marginTop: 10,
-        fontWeight: 'bold'
+        fontWeight: '600'
     }
 })
 

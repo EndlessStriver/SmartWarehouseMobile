@@ -4,6 +4,7 @@ import { Camera, CameraView } from 'expo-camera';
 import GetProductInformationById, { Product } from '@/service/GetProductInformationById';
 import GetLocationInformationByCode, { LocationData } from '@/service/GetLocationInformationById';
 import ProductListLocationDetail from '@/compoments/ProductListLocationDetail';
+import LocationInformationDetail from '@/compoments/LocationInformationDetail';
 
 export default function BarcodeScanner() {
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -79,69 +80,7 @@ export default function BarcodeScanner() {
                 {
                     data && location &&
                     <View style={styles.overlay}>
-                        <Text style={styles.lable1}>Thông tin vị trí</Text>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Tên vị trí: </Text>
-                            <Text>{location?.locationCode}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Trạng thái: </Text>
-                            <Text>{location?.occupied ? "Đang được sử dụng" : "Đang trống"}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Thể tích tối đa: </Text>
-                            <Text>{Number(location?.maxCapacity).toLocaleString()} cm3</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Thể tích đang sử dụng: </Text>
-                            <Text>{Number(location?.currentCapacity).toLocaleString()} cm3</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Khối lượng chứa tối đa: </Text>
-                            <Text>{Number(location?.maxWeight).toLocaleString()} kg</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Khối lượng đang sử dụng: </Text>
-                            <Text>{Number(location?.currentWeight).toLocaleString()} kg</Text>
-                        </View>
-                        <Text style={styles.lable1}>Thông tin sản phẩm đang chứa</Text>
-                        {
-                            location.occupied ?
-                                <View>
-                                    <Image
-                                        style={styles.imageproduct}
-                                        source={{
-                                            uri: location.skus.productDetails.product.img
-                                        }}
-                                    />
-                                    <View style={styles.containerlable}>
-                                        <Text style={styles.lable}>Mã SKU: </Text>
-                                        <Text>{location.skus.skuCode}</Text>
-                                    </View>
-                                    <View style={styles.containerlable}>
-                                        <Text style={styles.lable}>Mã sản phẩm: </Text>
-                                        <Text>{location.skus.productDetails.product.productCode}</Text>
-                                    </View>
-                                    <View style={styles.containerlable}>
-                                        <Text style={styles.lable}>Tên sản phẩm: </Text>
-                                        <Text>{location.skus.productDetails.product.name}</Text>
-                                    </View>
-                                    <View style={styles.containerlable}>
-                                        <Text style={styles.lable}>Số lượng: </Text>
-                                        <Text>{location.quantity} {location.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name}</Text>
-                                    </View>
-                                    <View style={styles.containerlable}>
-                                        <Text style={styles.lable}>Trọng lượng: </Text>
-                                        <Text>{location.skus.weight} kg</Text>
-                                    </View>
-                                    <View style={styles.containerlable}>
-                                        <Text style={styles.lable}>Kích thước: </Text>
-                                        <Text>{location.skus.dimension} cm</Text>
-                                    </View>
-                                </View>
-                                :
-                                <Text style={{ marginBottom: 10 }}>Vị trí chưa chứa sản phẩm nào</Text>
-                        }
+                        <LocationInformationDetail location={location} />
                     </View>
                 }
                 {scanned && (
@@ -171,22 +110,4 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 10,
     },
-    containerlable: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    lable: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    lable1: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: "#0984e3"
-    },
-    imageproduct: {
-        width: 100,
-        height: 100,
-    }
 });
