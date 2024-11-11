@@ -1,7 +1,8 @@
 import GetProductsByNameAndCodeAndSupplierName, { Product } from "@/service/GetProductsByNameAndCodeAndSupplierName";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const WareHouse = () => {
 
@@ -24,10 +25,45 @@ const WareHouse = () => {
             .catch((error) => {
                 console.log(error);
             })
-    }, [])
+    }, [keyWord, pagination.page, pagination.pageSize]);
 
     return (
         <View style={styles.container}>
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 10,
+                marginBottom: 10,
+                width: '100%',
+            }}>
+                <Text style={{ fontWeight: '600' }}>Tìm kiếm: </Text>
+                <TextInput
+                    style={{
+                        width: 200,
+                        height: 40,
+                        padding: 10,
+                        backgroundColor: '#ecf0f1',
+                        borderRadius: 5,
+                        borderWidth: 1,
+                    }}
+                    placeholder='Nhập từ khóa'
+                    value={keyWord}
+                    onChangeText={(text) => setKeyWord(text)}
+                />
+                <TouchableOpacity
+                    onPress={() => {
+                        setKeyWord('');
+                    }}
+                    style={{
+                        backgroundColor: '#3498db',
+                        padding: 10,
+                        borderRadius: 5,
+                    }}
+                >
+                    <Ionicons name="refresh" size={24} color={"white"} />
+                </TouchableOpacity>
+            </View>
             <Text style={styles.lable}>Thông tin tồn kho</Text>
             <FlatList
                 style={{
