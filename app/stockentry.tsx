@@ -41,19 +41,34 @@ const StockEntry: React.FC = () => {
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         onPress={() => {
-                            router.push({
-                                pathname: '/stockentrydetail',
-                                params: {
-                                    receiveId: item.id
-                                }
-                            })
+                            if (item.status === "COMPLETERECEIVECHECK") {
+                                router.push({
+                                    pathname: '/stockentrydetail',
+                                    params: {
+                                        receiveId: item.id
+                                    }
+                                })
+                            } else {
+                                Alert.alert('Thông báo', 'Phiếu nhập kho chưa hoàn thành kiểm tra');
+                            }
                         }}
-                        style={styles.receiveCheck}
+                        style={{
+                            padding: 10,
+                            marginBottom: 10,
+                            borderRadius: 5,
+                            backgroundColor: `${item.status === "COMPLETERECEIVECHECK" ? "#2ecc71" : (item.status === "PENDING") ? "#f1c40f" : "#e74c3c"}`,
+                            position: 'relative',
+                        }}
                     >
                         <Text style={{ fontWeight: "600", color: "#3498db" }}>{item.receiveCode}</Text>
                         <Text style={{ fontWeight: "600", color: "#e74c3c" }}>{FormatDate(item.receiveDate)}</Text>
                         <Text style={{ fontWeight: "600", color: "#34495e" }}>{item.receiveBy}</Text>
-                        <Text>
+                        <Text style={{
+                            position: 'absolute',
+                            right: 10,
+                            top: 10,
+                            fontWeight: '600',
+                        }}>
                             {item.status === "COMPLETERECEIVECHECK" ? "Đã nhập kho" : (item.status === "PENDING") ? "Chờ Xử Lý" : "Đã hủy"}
                         </Text>
                     </TouchableOpacity>
@@ -76,12 +91,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 10,
     },
-    receiveCheck: {
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 5,
-        backgroundColor: '#bdc3c7',
-    }
 });
 
 export default StockEntry;

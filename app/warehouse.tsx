@@ -14,17 +14,21 @@ const WareHouse = () => {
     });
 
     useEffect(() => {
-        GetProductsByNameAndCodeAndSupplierName(keyWord, pagination.pageSize, pagination.page)
-            .then((response) => {
-                setProducts(response.data);
-                setPagination({
-                    page: response.offset,
-                    pageSize: response.limit,
+        const id = setTimeout(() => {
+            GetProductsByNameAndCodeAndSupplierName(keyWord, pagination.pageSize, pagination.page)
+                .then((response) => {
+                    setProducts(response.data);
+                    setPagination({
+                        page: response.offset,
+                        pageSize: response.limit,
+                    })
                 })
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+                .catch((error) => {
+                    console.log(error);
+                })
+        }, 500);
+
+        return () => clearTimeout(id);
     }, [keyWord, pagination.page, pagination.pageSize]);
 
     return (
