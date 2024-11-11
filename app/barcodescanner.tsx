@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Button, StyleSheet, Alert, Image, FlatList } from 'react-native';
+import { Text, View, Button, StyleSheet, Alert, Image } from 'react-native';
 import { Camera, CameraView } from 'expo-camera';
 import GetProductInformationById, { Product } from '@/service/GetProductInformationById';
 import GetLocationInformationByCode, { LocationData } from '@/service/GetLocationInformationById';
+import ProductListLocationDetail from '@/compoments/ProductListLocationDetail';
 
 export default function BarcodeScanner() {
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -72,66 +73,7 @@ export default function BarcodeScanner() {
                 {
                     data && product &&
                     <View style={styles.overlay}>
-                        <Text style={styles.lable1}>Thông tin sản phẩm</Text>
-                        <Image
-                            style={styles.imageproduct}
-                            source={{
-                                uri: product?.img
-                            }}
-                        />
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Mã sản phẩm: </Text>
-                            <Text>{product?.productCode}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Tên sản phẩm: </Text>
-                            <Text>{product?.name}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Loại sản phẩm: </Text>
-                            <Text>{product?.category.name}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Mô tả: </Text>
-                            <Text>{product?.description}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Số lượng tồn kho: </Text>
-                            <Text>{product?.productDetails[0].quantity} {product?.units.find((unit) => unit.isBaseUnit)?.name}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Mã SKU: </Text>
-                            <Text>{product?.productDetails[0].sku[0].skuCode}</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Trọng lượng: </Text>
-                            <Text>{product?.productDetails[0].sku[0].weight} kg</Text>
-                        </View>
-                        <View style={styles.containerlable}>
-                            <Text style={styles.lable}>Kích thước: </Text>
-                            <Text>{product?.productDetails[0].sku[0].dimension} cm</Text>
-                        </View>
-                        <Text style={styles.lable1}>Danh Sách Vị Trí Chứa Trong Kho</Text>
-                        {
-                            product?.productDetails[0].sku[0].locations.length === 0 ?
-                                <Text style={{ marginBottom: 10 }}>Không có vị trí chứa sản phẩm</Text>
-                                :
-                                <FlatList
-                                    style={{
-                                        width: '100%',
-                                    }}
-                                    data={product?.productDetails[0].sku[0].locations}
-                                    renderItem={({ item }) => (
-                                        <View style={styles.containerlable}>
-                                            <Text style={styles.lable}>Vị trí: </Text>
-                                            <Text style={{ marginRight: 10 }}>{item.locationCode}</Text>
-                                            <Text style={styles.lable}>Số lượng đang chứa: </Text>
-                                            <Text>{item.quantity} {product?.units.find((unit) => unit.isBaseUnit)?.name}</Text>
-                                        </View>
-                                    )}
-                                    keyExtractor={(item) => item.id}
-                                />
-                        }
+                        <ProductListLocationDetail product={product} />
                     </View>
                 }
                 {
@@ -227,7 +169,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         backgroundColor: 'white',
-        padding: 20,
+        padding: 10,
     },
     containerlable: {
         display: 'flex',
@@ -241,7 +183,6 @@ const styles = StyleSheet.create({
     lable1: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginTop: 10,
         color: "#0984e3"
     },
     imageproduct: {

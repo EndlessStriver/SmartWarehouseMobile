@@ -33,7 +33,6 @@ const WareHouse = () => {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: 10,
                 marginBottom: 10,
                 width: '100%',
             }}>
