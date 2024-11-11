@@ -1,7 +1,7 @@
 import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import FormatDate from "@/unit/FormatDate";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useNavigation } from "expo-router";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const StockEntry: React.FC = () => {
@@ -13,6 +13,33 @@ const StockEntry: React.FC = () => {
         totalPage: 0,
         totalElementOfPage: 0
     });
+
+    const navigation = useNavigation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push({
+                            pathname: '/createstockentry',
+                            params: {
+                                receiveId: null
+                            }
+                        })
+                    }}
+                    style={{
+                        padding: 10,
+                        borderRadius: 5,
+                        backgroundColor: "#3498db",
+                        marginRight: 10,
+                    }}
+                >
+                    <Text style={{ color: "#fff", fontWeight: "600" }}>Tạo Phiếu Nhập Kho</Text>
+                </TouchableOpacity>
+            )
+        })
+    }, [navigation])
 
     useEffect(() => {
         GetReceives()

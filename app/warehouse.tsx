@@ -64,7 +64,7 @@ const WareHouse = () => {
                         borderRadius: 5,
                     }}
                 >
-                    <Ionicons name="refresh" size={24} color={"white"} />
+                    <Ionicons name="refresh" size={16} color={"white"} />
                 </TouchableOpacity>
             </View>
             <Text style={styles.lable}>Thông tin tồn kho</Text>
