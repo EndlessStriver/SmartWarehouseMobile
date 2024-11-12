@@ -76,7 +76,12 @@ const StockEntry: React.FC = () => {
                                     }
                                 })
                             } else {
-                                Alert.alert('Thông báo', 'Phiếu nhập kho chưa hoàn thành kiểm tra');
+                                router.push({
+                                    pathname: '/handlestockentry',
+                                    params: {
+                                        receiveId: item.id
+                                    }
+                                })
                             }
                         }}
                         style={{

@@ -72,6 +72,13 @@ export default function RootLayout() {
           title: "Tạo phiếu nhập kho",
         }}
       />
+      <Stack.Screen
+        name="handlestockentry"
+        options={{
+          headerShown: true,
+          title: "Xử lý phiếu nhập kho",
+        }}
+      />
     </Stack>
   );
 }
