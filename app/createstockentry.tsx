@@ -1,55 +1,190 @@
+import GetProductBySupplierId, { ProductBySupplierId } from "@/service/GetProductBySupplierId";
 import GetSupplierBySupplierName, { Supplier } from "@/service/GetSupplierBySupplierName";
-import { FontAwesome } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { ProductStocEntry } from "@/typedata/ProductStocEntry";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Picker } from '@react-native-picker/picker';
+import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
+import FormatDate from "@/unit/FormatDate";
+import CreateStockEntryAPI from "@/service/CreateStockEntryAPI";
+import { router } from "expo-router";
 
 const CreateStockEntry = () => {
 
+    const [user, setUser] = useState<User>();
     const [supplier, setSupplier] = useState<{ value: string, lable: string }>();
     const [note, setNote] = useState('');
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModalVisibleProduct, setModalVisibleProduct] = useState(false);
+    const [productChecks, setProductChecks] = useState<ProductStocEntry[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useLayoutEffect(() => {
+        GetAccountInformationCurrent()
+            .then((res) => {
+                setUser(res);
+            })
+            .catch((err) => {
+                Alert.alert("Lỗi", err.message);
+            })
+    }, [])
+
+    useEffect(() => {
+        if (supplier) {
+            setProductChecks([]);
+        }
+    }, [supplier])
+
+    const addProductCheck = (product: ProductStocEntry) => {
+        setProductChecks([...productChecks, product]);
+    }
+
+    const validateNumber = (value: string) => {
+        const regex = /^[0-9]*$/;
+        return regex.test(value);
+    }
+
+    const updateQuantityProductCheck = (productId: string, quantity: number) => {
+        const newProductChecks = productChecks.map((product) => {
+            if (product.productId === productId && validateNumber(quantity.toString()) && quantity > 0) {
+                return {
+                    ...product,
+                    quantity: quantity,
+                }
+            }
+            return product;
+        });
+        setProductChecks(newProductChecks);
+    }
+
+    const updateCurrentUnitProductCheck = (productId: string, unitId: string) => {
+        const newProductChecks = productChecks.map((product) => {
+            if (product.productId === productId) {
+                return {
+                    ...product,
+                    currentUnit: unitId,
+                }
+            }
+            return product;
+        });
+        setProductChecks(newProductChecks);
+    }
+
+    const checkProductIsChecked = (productId: string) => {
+        return productChecks.some((product) => product.productId === productId);
+    }
+
+    const deleteProductCheck = (productId: string) => {
+        const newProductChecks = productChecks.filter((product) => product.productId !== productId);
+        setProductChecks(newProductChecks);
+    }
+
+    const handleSubmit = () => {
+        if (!supplier) {
+            Alert.alert("Lỗi", "Vui lòng chọn nhà cung cấp");
+            return;
+        }
+        if (productChecks.length === 0) {
+            Alert.alert("Lỗi", "Vui lòng chọn sản phẩm cần nhập kho");
+            return;
+        }
+        if (productChecks.some((product) => product.currentUnit === "")) {
+            Alert.alert("Lỗi", "Vui lòng chọn đơn vị tính cho sản phẩm");
+            return;
+        }
+        setLoading(true);
+        CreateStockEntryAPI({
+            receiveBy: user?.fullName || "",
+            receiveDate: new Date().toString(),
+            supplierId: supplier?.value || "",
+            description: note,
+            receiveItems: productChecks.map((product) => ({
+                productId: product.productId,
+                quantity: product.quantity,
+                unitId: product.currentUnit,
+                skuId: product.skuId,
+            }))
+        })
+            .then(() => {
+                Alert.alert("Thành công", "Tạo phiếu nhập kho thành công");
+                router.push("/stockentry")
+            })
+            .catch((err) => {
+                console.log(err);
+                Alert.alert("Lỗi", err.message);
+            })
+            .finally(() => setLoading(false));
+    }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.containergroup}>
-                <Text style={styles.fontweight}>Người tạo: </Text>
-                Ngô Thiên Phú
-            </Text>
-            <Text style={styles.containergroup}>
-                <Text style={styles.fontweight}>Ngày tạo: </Text>
-                20/10/2021
-            </Text>
-            <Text style={{
+            <View style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
                 width: "100%",
                 marginBottom: 10
             }}>
-                <Text style={styles.fontweight}>Nhà cung cấp: </Text>
-                {
-                    supplier && (
-                        <Text>
-                            {supplier ? supplier.lable : ""}
-                            <TouchableOpacity
-                                style={{ marginLeft: 10 }}
-                                onPress={() => setModalVisibleProduct(true)}
-                            >
-                                <FontAwesome name="edit" size={16} color="black" />
-                            </TouchableOpacity>
+                <View>
+                    <Text style={styles.containergroup}>
+                        <Text style={styles.fontweight}>Người tạo: </Text>
+                        {user?.fullName || ""}
+                    </Text>
+                    <Text style={styles.containergroup}>
+                        <Text style={styles.fontweight}>Ngày tạo: </Text>
+                        {FormatDate(new Date().toString())}
+                    </Text>
+                    <Text style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        marginBottom: 10
+                    }}>
+                        <Text style={styles.fontweight}>Nhà cung cấp: </Text>
+                        {
+                            supplier && (
+                                <Text>
+                                    {supplier ? supplier.lable : ""}
+                                    <TouchableOpacity
+                                        style={{ marginLeft: 10 }}
+                                        onPress={() => setModalVisibleProduct(true)}
+                                    >
+                                        <FontAwesome name="edit" size={16} color="black" />
+                                    </TouchableOpacity>
+                                </Text>
+                            )
+                        }
+                        {
+                            !supplier && (
+                                <TouchableOpacity
+                                    onPress={() => setModalVisibleProduct(true)}
+                                >
+                                    <Text style={{ color: "#3498db" }}>Chọn nhà cung cấp</Text>
+                                </TouchableOpacity>
+                            )
+                        }
+                    </Text>
+                </View>
+                <View>
+                    <TouchableOpacity
+                        onPress={handleSubmit}
+                        disabled={!supplier || productChecks.length === 0}
+                    >
+                        <Text style={{
+                            backgroundColor: "#3498db",
+                            color: "#fff",
+                            padding: 10,
+                            borderRadius: 5,
+                            fontWeight: "bold",
+                            textAlign: "center",
+                            width: "100%",
+                            opacity: supplier && productChecks.length > 0 ? 1 : 0.5
+                        }}>
+                            {loading ? "Đang tạo..." : "Tạo"}
                         </Text>
-                    )
-                }
-                {
-                    !supplier && (
-                        <TouchableOpacity
-                            onPress={() => setModalVisibleProduct(true)}
-                        >
-                            <Text style={{ color: "#3498db" }}>Chọn nhà cung cấp</Text>
-                        </TouchableOpacity>
-                    )
-                }
-            </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
             <Text style={styles.containergroup}>
                 <Text style={styles.fontweight}>Ghi chú:</Text>
             </Text>
@@ -88,9 +223,75 @@ const CreateStockEntry = () => {
                     }}>+ Thêm</Text>
                 </TouchableOpacity>
             </View>
+            {
+                productChecks.length === 0 ?
+                    <Text>Chưa có sản phẩm nào được chọn</Text> :
+                    <FlatList
+                        style={{
+                            width: "100%",
+                        }}
+                        data={productChecks}
+                        renderItem={({ item }) => (
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    marginBottom: 5,
+                                    borderWidth: 1,
+                                    padding: 10,
+                                    borderRadius: 5,
+                                    borderColor: "#3498db",
+                                }}
+                            >
+                                <Text style={styles.fontweight}>{item.productName}</Text>
+                                <View style={{ flexDirection: "row" }}>
+                                    <TextInput
+                                        style={{
+                                            width: 100,
+                                            height: 30,
+                                            borderWidth: 1,
+                                            padding: 5,
+                                            marginRight: 5,
+                                            borderColor: "gray",
+                                            color: "black",
+                                            borderRadius: 5,
+                                            backgroundColor: "#fff"
+                                        }}
+                                        onChangeText={(value) => updateQuantityProductCheck(item.productId, parseInt(value))}
+                                        value={item.quantity.toString()}
+                                        placeholder="Số lượng"
+                                    />
+                                    <Picker
+                                        selectedValue={item.currentUnit}
+                                        style={{ height: 30, width: 100 }}
+                                        onValueChange={(itemValue) => updateCurrentUnitProductCheck(item.productId, itemValue)}
+                                    >
+                                        <Picker.Item label="Đơn vị tính..." value="" />
+                                        {
+                                            item.units.map((unit) => (
+                                                <Picker.Item key={unit.unitId} label={unit.unitName} value={unit.unitId} />
+                                            ))
+                                        }
+                                    </Picker>
+                                    <TouchableOpacity
+                                        style={{ marginLeft: 10 }}
+                                        onPress={() => deleteProductCheck(item.productId)}
+                                    >
+                                        <AntDesign name="delete" size={24} color="red" />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )}
+                        keyExtractor={item => item.productId}
+                    />
+            }
             <ModalListProductSupplier
                 isModalVisible={isModalVisible}
                 setModalVisible={setModalVisible}
+                supplierId={supplier?.value || ""}
+                addProductCheck={addProductCheck}
+                checkProductIsChecked={checkProductIsChecked}
             />
             <ModalFindSupplier
                 isModalVisible={isModalVisibleProduct}
@@ -131,9 +332,35 @@ export default CreateStockEntry;
 interface ModalListProductSupplierProps {
     isModalVisible: boolean;
     setModalVisible: (value: boolean) => void;
+    supplierId: string;
+    addProductCheck: (product: ProductStocEntry) => void;
+    checkProductIsChecked: (productId: string) => boolean;
 }
 
 const ModalListProductSupplier: React.FC<ModalListProductSupplierProps> = (props) => {
+
+    const [products, setProducts] = useState<ProductBySupplierId[]>([]);
+    const [pagination, setPagination] = useState({
+        limit: 10,
+        offset: 1,
+    });
+
+    useEffect(() => {
+        if (props.supplierId) {
+            GetProductBySupplierId(props.supplierId, pagination.limit, pagination.offset)
+                .then((res) => {
+                    setProducts(res.data);
+                    setPagination({
+                        limit: res.limit,
+                        offset: res.offset,
+                    });
+                })
+                .catch((err) => {
+                    Alert.alert("Lỗi", err.message);
+                })
+        }
+    }, [props.supplierId])
+
     return (
         <Modal
             visible={props.isModalVisible}
@@ -173,6 +400,62 @@ const ModalListProductSupplier: React.FC<ModalListProductSupplierProps> = (props
                         <FontAwesome name="close" size={24} color="black" />
                     </TouchableOpacity>
                 </View>
+                {
+                    products.length === 0 ?
+                        <Text>Không có sản phẩm nào...</Text>
+                        :
+                        <FlatList
+                            style={{
+                                width: "100%",
+                            }}
+                            data={products}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={{
+                                        opacity: props.checkProductIsChecked(item.id) ? 0.5 : 1
+                                    }}
+                                    disabled={props.checkProductIsChecked(item.id)}
+                                    onPress={() => {
+                                        props.addProductCheck({
+                                            productId: item.id,
+                                            productName: item.name,
+                                            quantity: 1,
+                                            currentUnit: "",
+                                            units: item.units.map((unit) => ({
+                                                unitId: unit.id,
+                                                unitName: unit.name,
+                                            })),
+                                            skuId: item.productDetails[0].sku[0].id
+                                        });
+                                        props.setModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={{
+                                        padding: 10,
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                        marginBottom: 5,
+                                        borderColor: "#3498db",
+                                        width: "100%",
+                                        color: "#3498db",
+                                    }}>
+                                        {item.name}
+                                        {
+                                            props.checkProductIsChecked(item.id) && (
+                                                <AntDesign
+                                                    style={{ position: "absolute", right: 10 }}
+                                                    name="checkcircle"
+                                                    size={16}
+                                                    color="#3498db"
+                                                />
+                                            )
+                                        }
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                            keyExtractor={item => item.id}
+                        />
+                }
             </View>
         </Modal>
     )

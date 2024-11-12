@@ -1,4 +1,5 @@
-import { removeData, storeData } from "@/unit/MyLocalStorage"
+import DecodeToken from "@/unit/DecodeToken"
+import { removeData, storeData, storeJSON } from "@/unit/MyLocalStorage"
 import axios from "axios"
 
 const LoginService = async (username: string, password: string): Promise<void> => {
@@ -10,6 +11,7 @@ const LoginService = async (username: string, password: string): Promise<void> =
         })
         storeData('token', response.data.data.token)
         storeData('role', response.data.data.role)
+        storeJSON('tokenDecode', DecodeToken(response.data.data.token))
     } catch (error) {
         removeData('token')
         removeData('role')

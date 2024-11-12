@@ -40,17 +40,16 @@ const WareHouse = () => {
                 marginBottom: 10,
                 width: '100%',
             }}>
-                <Text style={{ fontWeight: '600' }}>Tìm kiếm: </Text>
                 <TextInput
                     style={{
-                        width: 200,
+                        width: 320,
                         height: 40,
                         padding: 10,
                         backgroundColor: '#ecf0f1',
                         borderRadius: 5,
                         borderWidth: 1,
                     }}
-                    placeholder='Nhập từ khóa'
+                    placeholder='Nhập từ khóa...'
                     value={keyWord}
                     onChangeText={(text) => setKeyWord(text)}
                 />

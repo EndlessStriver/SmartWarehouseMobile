@@ -2,5 +2,12 @@ export type ProductStocEntry = {
     productId: string,
     productName: string,
     quantity: number,
-    unitId: string
+    currentUnit: string,
+    units: Unit[],
+    skuId: string,
+}
+
+export type Unit = {
+    unitId: string,
+    unitName: string,
 }
