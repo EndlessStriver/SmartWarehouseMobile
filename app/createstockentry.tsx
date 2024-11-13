@@ -292,7 +292,7 @@ const CreateStockEntry = () => {
                                     style={{
                                         height: 50,
                                         width: "100%",
-                                        backgroundColor: "#fff",
+                                        backgroundColor: "#95a5a6",
                                     }}
                                     onValueChange={(itemValue) => updateCurrentUnitProductCheck(item.productId, itemValue)}
                                 >
