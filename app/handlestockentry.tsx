@@ -88,7 +88,7 @@ const HandleStockEntry = () => {
         })
             .then(() => {
                 Alert.alert("Success", "Kiểm tra sản phẩm thành công");
-                router.push("/home")
+                router.replace("/home")
             })
             .catch((err) => {
                 Alert.alert("Error", err.message)
@@ -577,14 +577,11 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Text style={{ fontWeight: "bold" }}>Tình trạng: </Text>
+                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Tình trạng: </Text>
                 <Picker
                     style={{
-                        width: 200,
-                        borderRadius: 5,
-                        padding: 5,
-                        marginTop: 5,
-                        borderWidth: 1,
+                        width: "100%",
+                        backgroundColor: "#95a5a6",
                     }}
                     selectedValue={statusProduct}
                     onValueChange={(itemValue, itemIndex) =>
@@ -594,7 +591,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                     <Picker.Item label="Bình thường" value="NORMAL" />
                     <Picker.Item label="Bị hư hại" value="DAMAGED" />
                 </Picker>
-                <Text style={{ fontWeight: "bold" }}>Số lượng kiểm tra: </Text>
+                <Text style={{ fontWeight: "bold", marginTop: 5 }}>Số lượng kiểm tra: </Text>
                 <TextInput
                     placeholder="Số lượng kiểm tra..."
                     value={numberQuantityCheck.toString()}

@@ -19,6 +19,7 @@ const CreateStockEntry = () => {
     const [isModalVisibleProduct, setModalVisibleProduct] = useState(false);
     const [productChecks, setProductChecks] = useState<ProductStocEntry[]>([]);
     const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
 
     useLayoutEffect(() => {
         GetAccountInformationCurrent()
@@ -108,7 +109,7 @@ const CreateStockEntry = () => {
         })
             .then(() => {
                 Alert.alert("Thành công", "Tạo phiếu nhập kho thành công");
-                router.push("/stockentry")
+                router.replace("/stockentry")
             })
             .catch((err) => {
                 console.log(err);
@@ -134,24 +135,34 @@ const CreateStockEntry = () => {
                         <Text style={styles.fontweight}>Ngày tạo: </Text>
                         {FormatDate(new Date().toString())}
                     </Text>
-                    <Text style={{
+                    <View style={{
                         flexDirection: "row",
-                        justifyContent: "space-between",
                         width: "100%",
-                        marginBottom: 10
+                        marginBottom: 10,
                     }}>
-                        <Text style={styles.fontweight}>Nhà cung cấp: </Text>
+                        <Text style={{
+                            fontSize: 14,
+                            fontWeight: "bold",
+                            marginRight: 10
+                        }}>
+                            Nhà cung cấp:
+                        </Text>
                         {
                             supplier && (
-                                <Text>
-                                    {supplier ? supplier.lable : ""}
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        gap: 10,
+                                    }}
+                                >
+                                    <Text>{supplier ? supplier.lable : ""}</Text>
                                     <TouchableOpacity
-                                        style={{ marginLeft: 10 }}
                                         onPress={() => setModalVisibleProduct(true)}
                                     >
                                         <FontAwesome name="edit" size={16} color="black" />
                                     </TouchableOpacity>
-                                </Text>
+                                </View>
                             )
                         }
                         {
@@ -163,7 +174,7 @@ const CreateStockEntry = () => {
                                 </TouchableOpacity>
                             )
                         }
-                    </Text>
+                    </View>
                 </View>
                 <View>
                     <TouchableOpacity
@@ -234,9 +245,7 @@ const CreateStockEntry = () => {
                         renderItem={({ item }) => (
                             <View
                                 style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
+                                    flexDirection: "column",
                                     marginBottom: 5,
                                     borderWidth: 1,
                                     padding: 10,
@@ -244,43 +253,56 @@ const CreateStockEntry = () => {
                                     borderColor: "#3498db",
                                 }}
                             >
-                                <Text style={styles.fontweight}>{item.productName}</Text>
-                                <View style={{ flexDirection: "row" }}>
-                                    <TextInput
-                                        style={{
-                                            width: 100,
-                                            height: 30,
-                                            borderWidth: 1,
-                                            padding: 5,
-                                            marginRight: 5,
-                                            borderColor: "gray",
-                                            color: "black",
-                                            borderRadius: 5,
-                                            backgroundColor: "#fff"
-                                        }}
-                                        onChangeText={(value) => updateQuantityProductCheck(item.productId, parseInt(value))}
-                                        value={item.quantity.toString()}
-                                        placeholder="Số lượng"
-                                    />
-                                    <Picker
-                                        selectedValue={item.currentUnit}
-                                        style={{ height: 30, width: 100 }}
-                                        onValueChange={(itemValue) => updateCurrentUnitProductCheck(item.productId, itemValue)}
-                                    >
-                                        <Picker.Item label="Đơn vị tính..." value="" />
-                                        {
-                                            item.units.map((unit) => (
-                                                <Picker.Item key={unit.unitId} label={unit.unitName} value={unit.unitId} />
-                                            ))
-                                        }
-                                    </Picker>
-                                    <TouchableOpacity
-                                        style={{ marginLeft: 10 }}
-                                        onPress={() => deleteProductCheck(item.productId)}
-                                    >
-                                        <AntDesign name="delete" size={24} color="red" />
-                                    </TouchableOpacity>
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        marginBottom: 10,
+                                    }}
+                                >
+                                    <Text style={{ fontWeight: "600" }}>{item.productName}</Text>
+                                    <View style={{ flexDirection: "row" }}>
+                                        <TextInput
+                                            style={{
+                                                width: 100,
+                                                height: 30,
+                                                borderWidth: 1,
+                                                padding: 5,
+                                                marginRight: 5,
+                                                borderColor: "gray",
+                                                color: "black",
+                                                borderRadius: 5,
+                                                backgroundColor: "#fff"
+                                            }}
+                                            onChangeText={(value) => updateQuantityProductCheck(item.productId, parseInt(value))}
+                                            value={item.quantity.toString()}
+                                            placeholder="Số lượng"
+                                        />
+                                        <TouchableOpacity
+                                            style={{ marginLeft: 10 }}
+                                            onPress={() => deleteProductCheck(item.productId)}
+                                        >
+                                            <AntDesign name="delete" size={24} color="red" />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
+                                <Picker
+                                    selectedValue={item.currentUnit}
+                                    style={{
+                                        height: 50,
+                                        width: "100%",
+                                        backgroundColor: "#fff",
+                                    }}
+                                    onValueChange={(itemValue) => updateCurrentUnitProductCheck(item.productId, itemValue)}
+                                >
+                                    <Picker.Item label="Đơn vị tính..." value="" />
+                                    {
+                                        item.units.map((unit) => (
+                                            <Picker.Item key={unit.unitId} label={unit.unitName} value={unit.unitId} />
+                                        ))
+                                    }
+                                </Picker>
                             </View>
                         )}
                         keyExtractor={item => item.productId}
@@ -430,27 +452,27 @@ const ModalListProductSupplier: React.FC<ModalListProductSupplierProps> = (props
                                         props.setModalVisible(false);
                                     }}
                                 >
-                                    <Text style={{
+                                    <View style={{
                                         padding: 10,
                                         borderWidth: 1,
                                         borderRadius: 5,
                                         marginBottom: 5,
                                         borderColor: "#3498db",
                                         width: "100%",
-                                        color: "#3498db",
+                                        position: "relative",
                                     }}>
-                                        {item.name}
+                                        <Text style={{ color: "#3498db", }}>{item.name}</Text>
                                         {
                                             props.checkProductIsChecked(item.id) && (
                                                 <AntDesign
-                                                    style={{ position: "absolute", right: 10 }}
+                                                    style={{ position: "absolute", right: 10, top: 13 }}
                                                     name="checkcircle"
                                                     size={16}
                                                     color="#3498db"
                                                 />
                                             )
                                         }
-                                    </Text>
+                                    </View>
                                 </TouchableOpacity>
                             )}
                             keyExtractor={item => item.id}
