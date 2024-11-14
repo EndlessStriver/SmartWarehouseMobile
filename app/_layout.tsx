@@ -5,8 +5,10 @@ export default function RootLayout() {
     <Stack
       initialRouteName="index"
       screenOptions={{
+        statusBarStyle: "light",
+        statusBarBackgroundColor: "#2980b9",
         headerStyle: {
-          backgroundColor: "#0984e3",
+          backgroundColor: "#2980b9",
         },
         headerTintColor: "#fff",
         headerTitleStyle: {

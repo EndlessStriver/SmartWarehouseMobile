@@ -18,7 +18,7 @@ export default function BarcodeScanner() {
             const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === 'granted');
         })();
-    }, [scanned]);
+    }, []);
 
     useEffect(() => {
         if (data) {
@@ -85,11 +85,10 @@ export default function BarcodeScanner() {
                 }
                 {scanned && (
                     <Button title="Quét lại" onPress={() => {
-                        setScanned(false);
-                        setData(null);
-                        setHasPermission(false);
                         setProduct(null);
                         setLocation(null);
+                        setData(null);
+                        setScanned(false);
                     }} />
                 )}
             </CameraView>
