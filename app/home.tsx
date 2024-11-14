@@ -12,7 +12,7 @@ const Home = () => {
                     router.push('/barcodescanner')
                 }}
             >
-                <FontAwesome name="search" size={24} color={"white"} />
+                <FontAwesome name="search" size={24} color={"black"} />
                 <Text style={style.textButton}>QR Code</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -21,7 +21,7 @@ const Home = () => {
                     router.push('/stockentry')
                 }}
             >
-                <MaterialIcons name="inventory" size={24} color={"white"} />
+                <MaterialIcons name="inventory" size={24} color={"black"} />
                 <Text style={style.textButton}>Nhập Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -30,7 +30,7 @@ const Home = () => {
                     router.push('/stockentry')
                 }}
             >
-                <MaterialCommunityIcons name="exit-to-app" size={24} color={"white"} />
+                <MaterialCommunityIcons name="exit-to-app" size={24} color={"black"} />
                 <Text style={style.textButton}>Xuất Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -39,7 +39,7 @@ const Home = () => {
                     router.push('/warehouse')
                 }}
             >
-                <MaterialCommunityIcons name="warehouse" size={24} color={"white"} />
+                <MaterialCommunityIcons name="warehouse" size={24} color={"black"} />
                 <Text style={style.textButton}>Tồn Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -48,7 +48,7 @@ const Home = () => {
                     router.push('/warehouse')
                 }}
             >
-                <FontAwesome name="clipboard" size={24} color="white" />
+                <FontAwesome name="clipboard" size={24} color="black" />
                 <Text style={style.textButton}>Kiểm Kê</Text>
             </TouchableOpacity>
         </View>
@@ -68,13 +68,14 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#0984e3',
+        backgroundColor: 'white',
         borderRadius: 5,
         width: "100%",
         height: 50,
+        padding: 10,
     },
     textButton: {
-        color: 'white',
+        color: 'black',
         fontSize: 16,
         fontWeight: '600',
         marginLeft: 10

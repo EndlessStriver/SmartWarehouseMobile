@@ -1,5 +1,6 @@
 import CreateReceiveCheck from "@/service/CreateReceiveCheck";
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
+import GetShelfByCategoryNameAndTypeShelf, { Shelf } from "@/service/GetShelfByCategoryNameAndTypeShelf";
 import GetStockEntryById, { ReceiveItem, ReceiveOrder } from "@/service/GetStockEntryById";
 import SuggestInbound from "@/service/SuggestInbound";
 import FormatDate from "@/unit/FormatDate";
@@ -136,16 +137,11 @@ const HandleStockEntry = () => {
                             <TouchableOpacity
                                 disabled={productIsCheck.length === 0}
                                 onPress={handleSubmit}
-                            >
-                                <Text style={{
-                                    color: "#3498db",
-                                    fontWeight: "bold",
-                                    backgroundColor: "#3498db",
-                                    padding: 10,
+                                style={{
                                     opacity: productIsCheck.length === 0 ? 0.5 : 1,
-                                }}>
-                                    <Text style={{ color: "white" }}>Xác nhận</Text>
-                                </Text>
+                                }}
+                            >
+                                <Text style={{ color: "#3498db", fontWeight: "bold" }}>Xác nhận</Text>
                             </TouchableOpacity>
                         </View>
                         <View
@@ -153,13 +149,13 @@ const HandleStockEntry = () => {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
                                 alignItems: 'flex-end',
+                                marginBottom: 10
                             }}
                         >
                             <Text
                                 style={{
                                     fontSize: 16,
                                     fontWeight: 'bold',
-                                    marginBottom: 10,
                                     color: "#3498db"
                                 }}
                             >
@@ -168,9 +164,9 @@ const HandleStockEntry = () => {
                             <TouchableOpacity
                                 onPress={() => setModalVisible(true)}
                                 style={{
-                                    padding: 10,
-                                    backgroundColor: "#2ecc71",
+                                    padding: 4,
                                     borderRadius: 5,
+                                    backgroundColor: "#2ecc71",
                                 }}
                             >
                                 <Text style={{ color: "white", fontWeight: "bold" }}>Thêm +</Text>
@@ -182,8 +178,9 @@ const HandleStockEntry = () => {
                                     style={{
                                         textAlign: "center",
                                         color: "#e74c3c",
-                                        fontSize: 16,
-                                        marginTop: 10
+                                        fontSize: 14,
+                                        marginTop: 10,
+                                        fontWeight: "600"
                                     }}
                                 >Chưa có sản phẩm nào được kiểm tra...</Text>
                                 :
@@ -294,7 +291,7 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
             <View
                 style={{
                     flex: 1,
-                    padding: 20,
+                    padding: 10,
                     alignItems: 'flex-start',
                     backgroundColor: '#fff',
                 }}
@@ -305,18 +302,17 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        marginBottom: 10
                     }}
                 >
                     <Text
                         style={{
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: "bold",
-                            marginTop: 10,
-                            marginBottom: 10,
                             color: "#3498db"
                         }}
                     >
-                        Danh sách sản phẩm cần kiểm tra
+                        Danh Sách Sản Phẩm Cần Kiểm Tra
                     </Text>
                     <TouchableOpacity
                         onPress={() => props.setModalVisible(false)}
@@ -521,7 +517,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
             <View
                 style={{
                     flex: 1,
-                    padding: 20,
+                    padding: 10,
                     alignItems: 'flex-start',
                     backgroundColor: '#fff',
                 }}
@@ -532,18 +528,17 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        marginBottom: 10
                     }}
                 >
                     <Text
                         style={{
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: "bold",
-                            marginTop: 10,
-                            marginBottom: 10,
                             color: "#3498db"
                         }}
                     >
-                        Kiểm tra sản phẩm
+                        Kiểm Tra Sản Phẩm
                     </Text>
                     <TouchableOpacity
                         onPress={() => props.setModalVisible(false)}
@@ -577,7 +572,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                             onPress={handleSubmit}
                         >
                             <Text style={{
-                                padding: 10,
+                                padding: 5,
                                 backgroundColor: "#2ecc71",
                                 borderRadius: 5,
                                 color: "#fff",
@@ -586,7 +581,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Tình trạng: </Text>
+                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Tình trạng sản phẩm: </Text>
                 <Picker
                     style={{
                         width: "100%",
@@ -633,12 +628,14 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                         > {locationSelect.lable}</Text>
                     </Text>
                     <TouchableOpacity
+                        disabled={(statusProduct === "" || (numberQuantityCheck === "" || Number(numberQuantityCheck) <= 0)) ? true : false}
                         onPress={() => setModalVisible(true)}
                     >
                         <Text
                             style={{
                                 color: "#3498db",
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                opacity: (statusProduct === "" || (numberQuantityCheck === "" || Number(numberQuantityCheck) <= 0)) ? 0.5 : 1
                             }}
                         >Tùy chỉnh</Text>
                     </TouchableOpacity>
@@ -701,6 +698,8 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                 <ModalOptionShelf
                     isModalVisible={isModalVisible}
                     setModalVisible={setModalVisible}
+                    typeShelf={statusProduct}
+                    categoryName={props.receiveItem?.product.category.name || ""}
                 />
             }
         </Modal>
@@ -710,17 +709,98 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
 interface ModalOptionShelfProps {
     isModalVisible: boolean;
     setModalVisible: (value: boolean) => void;
+    categoryName: string,
+    typeShelf: string,
 }
 
 const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
+
+    const [shelfs, setShelfs] = useState<Shelf[]>([]);
+    const [navigation, setNavigation] = useState({
+        limit: 10,
+        offset: 1,
+        totalPage: 0,
+    });
+
+    useEffect(() => {
+        GetShelfByCategoryNameAndTypeShelf(props.categoryName, props.typeShelf, navigation.offset, navigation.limit)
+            .then((res) => {
+                setShelfs(res.data)
+                setNavigation({
+                    limit: res.limit,
+                    offset: res.offset,
+                    totalPage: res.totalPage
+                })
+            })
+            .catch((err) => {
+                Alert.alert("Error", err.message)
+            })
+    }, [props.categoryName, props.typeShelf, navigation.offset, navigation.limit])
+
     return (
         <Modal
             visible={props.isModalVisible}
             onRequestClose={() => props.setModalVisible(false)}
             animationType="fade"
         >
-            <View>
-                <Text>Modal Option Location</Text>
+            <View
+                style={{
+                    flex: 1,
+                    padding: 10,
+                    alignItems: 'flex-start',
+                    backgroundColor: '#fff',
+                }}
+            >
+                <View
+                    style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 10,
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 20,
+                            fontWeight: "bold",
+                            color: "#3498db",
+                        }}
+                    >
+                        Danh Sách Kệ
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => props.setModalVisible(false)}
+                    >
+                        <FontAwesome name="close" size={24} color="black" />
+                    </TouchableOpacity>
+                </View>
+                <FlatList
+                    style={{ width: "100%" }}
+                    data={shelfs}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                        <View
+                            style={{
+                                backgroundColor: "#ecf0f1",
+                                padding: 15,
+                                marginBottom: 10,
+                                borderRadius: 5,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Text>{item.name}</Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    props.setModalVisible(false);
+                                }}
+                            >
+                                <Text style={{ color: "#3498db" }}>Chọn</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                />
             </View>
         </Modal>
     )
