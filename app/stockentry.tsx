@@ -79,11 +79,11 @@ const StockEntry: React.FC = () => {
                             padding: 10,
                             marginBottom: 10,
                             borderRadius: 5,
-                            backgroundColor: `${item.status === "COMPLETERECEIVECHECK" ? "#2ecc71" : (item.status === "PENDING") ? "#f1c40f" : "#e74c3c"}`,
+                            backgroundColor: `${item.status === "COMPLETERECEIVECHECK" ? "#3498db" : (item.status === "PENDING") ? "#f1c40f" : "#e74c3c"}`,
                             position: 'relative',
                         }}
                     >
-                        <Text style={{ fontWeight: "600", color: "#3498db" }}>{item.receiveCode}</Text>
+                        <Text style={{ fontWeight: "600", color: "#ffffff" }}>{item.receiveCode}</Text>
                         <Text style={{ fontWeight: "600", color: "#e74c3c" }}>{FormatDate(item.receiveDate)}</Text>
                         <Text style={{ fontWeight: "600", color: "#34495e" }}>{item.receiveBy}</Text>
                         <Text style={{
