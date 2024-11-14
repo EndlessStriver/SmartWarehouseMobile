@@ -88,7 +88,7 @@ const HandleStockEntry = () => {
         })
             .then(() => {
                 Alert.alert("Success", "Kiểm tra sản phẩm thành công");
-                router.replace("/home")
+                router.replace("/stockentry")
             })
             .catch((err) => {
                 Alert.alert("Error", err.message)
@@ -435,7 +435,8 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                     })))
                 })
                 .catch((err) => {
-                    Alert.alert("Error", err.message)
+                    // console.log(err)
+                    // Alert.alert("Error", err.message)
                 })
         }
     }, [numberQuantityCheck, statusProduct])
@@ -597,8 +598,8 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                     value={numberQuantityCheck.toString()}
                     onChangeText={(text) => setNumberQuantityCheck(text)}
                     style={{
-                        width: 200,
-                        padding: 5,
+                        width: "100%",
+                        padding: 10,
                         borderWidth: 1,
                         borderRadius: 5,
                         marginTop: 5
@@ -609,10 +610,9 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                     Chọn vị trí chứa:
                     <Text
                         style={{
-                            color: locationSelect.value === "" ? "red" : "#3498db",
-                            marginLeft: 5
+                            color: locationSelect.value === "" ? "red" : "#3498db"
                         }}
-                    >{locationSelect.lable}</Text>
+                    > {locationSelect.lable}</Text>
                 </Text>
                 {
                     filterLocation().length === 0 ?
@@ -620,6 +620,8 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                         :
                         <FlatList
                             style={{ width: "100%" }}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
                             data={filterLocation()}
                             keyExtractor={(item) => item.value}
                             renderItem={({ item }) => (

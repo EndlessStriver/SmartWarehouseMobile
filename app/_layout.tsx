@@ -18,7 +18,7 @@ export default function RootLayout() {
         name="index"
         options={{
           headerShown: false,
-          title: "Đăng nhập",
+          title: "Đăng Nhập",
 
         }}
       />
@@ -26,57 +26,58 @@ export default function RootLayout() {
         name="home"
         options={{
           headerShown: true,
-          headerBackVisible: false,
-          title: "Trang chủ",
+          headerBackVisible: true,
+          title: "Trang Chủ",
         }}
       />
       <Stack.Screen
         name="barcodescanner"
         options={{
           headerShown: true,
-          title: "Quét mã vạch",
+          title: "Quét Mã Vạch",
         }}
       />
       <Stack.Screen
         name="stockentry"
         options={{
           headerShown: true,
-          title: "Nhập kho",
+          headerBackVisible: false,
+          title: "Nhập Kho",
         }}
       />
       <Stack.Screen
         name="stockentrydetail"
         options={{
           headerShown: true,
-          title: "Chi tiết phiếu nhập kho",
+          title: "Chi Tiết Phiếu Nhập Kho",
         }}
       />
       <Stack.Screen
         name="warehouse"
         options={{
           headerShown: true,
-          title: "Tồn kho",
+          title: "Tồn Kho",
         }}
       />
       <Stack.Screen
         name="warehousedetail"
         options={{
           headerShown: true,
-          title: "Chi tiết sản phẩm tồn kho",
+          title: "Chi Tiết Sản Phẩm Tồn Kho",
         }}
       />
       <Stack.Screen
         name="createstockentry"
         options={{
           headerShown: true,
-          title: "Tạo phiếu nhập kho",
+          title: "Tạo Phiếu Nhập Kho",
         }}
       />
       <Stack.Screen
         name="handlestockentry"
         options={{
           headerShown: true,
-          title: "Xử lý phiếu nhập kho",
+          title: "Xử lý Phiếu Nhập Kho",
         }}
       />
     </Stack>

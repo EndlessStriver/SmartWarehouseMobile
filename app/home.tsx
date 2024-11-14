@@ -12,7 +12,7 @@ const Home = () => {
                     router.push('/barcodescanner')
                 }}
             >
-                <FontAwesome name="search" size={30} color={"white"} />
+                <FontAwesome name="search" size={24} color={"white"} />
                 <Text style={style.textButton}>QR Code</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -21,7 +21,7 @@ const Home = () => {
                     router.push('/stockentry')
                 }}
             >
-                <MaterialIcons name="inventory" size={30} color={"white"} />
+                <MaterialIcons name="inventory" size={24} color={"white"} />
                 <Text style={style.textButton}>Nhập Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -30,7 +30,7 @@ const Home = () => {
                     router.push('/stockentry')
                 }}
             >
-                <MaterialCommunityIcons name="exit-to-app" size={30} color={"white"} />
+                <MaterialCommunityIcons name="exit-to-app" size={24} color={"white"} />
                 <Text style={style.textButton}>Xuất Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -39,7 +39,7 @@ const Home = () => {
                     router.push('/warehouse')
                 }}
             >
-                <MaterialCommunityIcons name="warehouse" size={30} color={"white"} />
+                <MaterialCommunityIcons name="warehouse" size={24} color={"white"} />
                 <Text style={style.textButton}>Tồn Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -60,24 +60,24 @@ const style = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         flexWrap: 'wrap',
-        gap: 20,
+        gap: 10,
         justifyContent: 'space-evenly',
-        padding: 20,
+        padding: 10,
     },
     buttonfnc: {
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#0984e3',
-        padding: 10,
         borderRadius: 5,
-        width: 150,
-        height: 150,
+        width: "100%",
+        height: 50,
     },
     textButton: {
         color: 'white',
-        fontSize: 20,
-        marginTop: 10,
-        fontWeight: '600'
+        fontSize: 16,
+        fontWeight: '600',
+        marginLeft: 10
     }
 })
 

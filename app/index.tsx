@@ -25,7 +25,7 @@ export default function Index() {
     if (validateForm()) {
       LoginService(username, password)
         .then(() => {
-          router.push('/home');
+          router.replace('/home');
         })
         .catch((error) => {
           console.log(error);
