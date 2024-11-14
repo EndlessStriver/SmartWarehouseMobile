@@ -41,7 +41,6 @@ export default function RootLayout() {
         name="stockentry"
         options={{
           headerShown: true,
-          headerBackVisible: false,
           title: "Nhập Kho",
         }}
       />

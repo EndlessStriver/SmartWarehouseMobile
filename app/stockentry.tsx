@@ -1,6 +1,5 @@
 import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import FormatDate from "@/unit/FormatDate";
-import { Ionicons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -28,19 +27,6 @@ const StockEntry: React.FC = () => {
                     <Text style={{ color: "#fff", fontWeight: "600" }}>Tạo Phiếu +</Text>
                 </TouchableOpacity>
             ),
-            headerLeft: () => (
-                <TouchableOpacity
-                    style={{
-                        padding: 10,
-                        marginRight: 10,
-                    }}
-                    onPress={() => {
-                        router.replace('/home')
-                    }}
-                >
-                    <Ionicons name="arrow-back-outline" size={24} color="white" />
-                </TouchableOpacity>
-            )
         })
     }, [navigation])
 

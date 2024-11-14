@@ -5,7 +5,7 @@ import SuggestInbound from "@/service/SuggestInbound";
 import FormatDate from "@/unit/FormatDate";
 import { FontAwesome } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 
@@ -25,6 +25,7 @@ const HandleStockEntry = () => {
     const [loading, setLoading] = useState(true);
     const [isModalVisible, setModalVisible] = useState(false);
     const [productIsCheck, setProductIsCheck] = useState<ProductIsCheckType[]>([]);
+    const navigation = useNavigation();
 
     useEffect(() => {
         GetAccountInformationCurrent()
@@ -88,7 +89,13 @@ const HandleStockEntry = () => {
         })
             .then(() => {
                 Alert.alert("Success", "Kiểm tra sản phẩm thành công");
-                router.replace("/stockentry")
+                navigation.reset({
+                    index: 1,
+                    routes: [
+                        { name: "home" as never },
+                        { name: "stockentry" as never }
+                    ]
+                })
             })
             .catch((err) => {
                 Alert.alert("Error", err.message)
@@ -418,6 +425,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
         maxQuantityInbound: 0
     });
     const [locations, setLocations] = useState<LocationType[]>([]);
+    const [isModalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         if (validateNumber(numberQuantityCheck) && statusProduct !== "") {
@@ -606,14 +614,35 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                     }}
                     keyboardType="number-pad"
                 />
-                <Text style={{ fontWeight: "bold", marginTop: 5, marginBottom: 10 }}>
-                    Chọn vị trí chứa:
-                    <Text
-                        style={{
-                            color: locationSelect.value === "" ? "red" : "#3498db"
-                        }}
-                    > {locationSelect.lable}</Text>
-                </Text>
+                <View
+                    style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginTop: 10,
+                        marginBottom: 10
+                    }}
+                >
+                    <Text style={{ fontWeight: "bold" }}>
+                        Chọn vị trí chứa:
+                        <Text
+                            style={{
+                                color: locationSelect.value === "" ? "red" : "#3498db"
+                            }}
+                        > {locationSelect.lable}</Text>
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => setModalVisible(true)}
+                    >
+                        <Text
+                            style={{
+                                color: "#3498db",
+                                fontWeight: "bold"
+                            }}
+                        >Tùy chỉnh</Text>
+                    </TouchableOpacity>
+                </View>
                 {
                     filterLocation().length === 0 ?
                         <Text style={{ color: "red" }} >Không tìm thấy vị trí chứa phù hợp</Text>
@@ -666,6 +695,32 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                             )}
                         />
                 }
+            </View>
+            {
+                isModalVisible &&
+                <ModalOptionShelf
+                    isModalVisible={isModalVisible}
+                    setModalVisible={setModalVisible}
+                />
+            }
+        </Modal>
+    )
+}
+
+interface ModalOptionShelfProps {
+    isModalVisible: boolean;
+    setModalVisible: (value: boolean) => void;
+}
+
+const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
+    return (
+        <Modal
+            visible={props.isModalVisible}
+            onRequestClose={() => props.setModalVisible(false)}
+            animationType="fade"
+        >
+            <View>
+                <Text>Modal Option Location</Text>
             </View>
         </Modal>
     )
