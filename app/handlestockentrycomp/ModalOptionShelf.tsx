@@ -5,6 +5,7 @@ import { Alert, FlatList, Modal, Text, TouchableOpacity, View } from "react-nati
 import ModalOptionLocation from "./ModalOptionLocation";
 import { LocationType } from "./ModalAddLocationProductCheck";
 import { ReceiveItem } from "@/service/GetStockEntryById";
+import { ProductIsCheckType } from "../handlestockentry";
 
 interface ModalOptionShelfProps {
     isModalVisible: boolean;
@@ -14,6 +15,7 @@ interface ModalOptionShelfProps {
     setLocationSelect: (data: LocationType) => void;
     receiveItem?: ReceiveItem
     quantity: number
+    productIsCheck: ProductIsCheckType[]
 }
 
 const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
@@ -123,6 +125,7 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
                 setLocationSelect={props.setLocationSelect}
                 receiveItem={props.receiveItem}
                 quantity={props.quantity}
+                productIsCheck={props.productIsCheck}
             />
         </Modal>
     )

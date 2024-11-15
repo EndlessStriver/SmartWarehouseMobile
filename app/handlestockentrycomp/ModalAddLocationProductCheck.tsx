@@ -109,7 +109,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
             location: locationSelect
         });
         setNumberQuantityCheck("");
-        setStatusProduct("");
+        setStatusProduct("NORMAL");
         setLocationSelect({ value: "", lable: "Vị trí...", maxQuantityInbound: 0 });
         props.setModalVisible(false);
     }
@@ -310,6 +310,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                     setLocationSelect={setLocationSelect}
                     receiveItem={props.receiveItem}
                     quantity={Number(numberQuantityCheck)}
+                    productIsCheck={props.productIsCheck}
                 />
             }
         </Modal>

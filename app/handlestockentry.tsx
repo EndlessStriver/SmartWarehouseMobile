@@ -1,14 +1,10 @@
 import CreateReceiveCheck from "@/service/CreateReceiveCheck";
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
-import GetShelfByCategoryNameAndTypeShelf, { Shelf } from "@/service/GetShelfByCategoryNameAndTypeShelf";
-import GetStockEntryById, { ReceiveItem, ReceiveOrder } from "@/service/GetStockEntryById";
-import SuggestInbound from "@/service/SuggestInbound";
+import GetStockEntryById, { ReceiveOrder } from "@/service/GetStockEntryById";
 import FormatDate from "@/unit/FormatDate";
-import { FontAwesome } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import ModalAddProductCheck from "./handlestockentrycomp/ModalAddProductCheck";
 
 export interface ProductIsCheckType {

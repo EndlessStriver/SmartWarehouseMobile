@@ -1,11 +1,12 @@
 import GetLocationByShelfId, { StorageLocation } from "@/service/GetLocationByShelfId";
 import { Shelf } from "@/service/GetShelfByCategoryNameAndTypeShelf";
-import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
 import { LocationType } from "./ModalAddLocationProductCheck";
 import { ReceiveItem } from "@/service/GetStockEntryById";
 import ConvertUnit from "@/service/ConvertUnit";
+import { ProductIsCheckType } from "../handlestockentry";
 
 interface ModalOptionLocationProps {
     isModalVisible: boolean;
@@ -14,6 +15,7 @@ interface ModalOptionLocationProps {
     setLocationSelect: (data: LocationType) => void;
     receiveItem?: ReceiveItem
     quantity: number
+    productIsCheck: ProductIsCheckType[]
 }
 
 const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
@@ -58,8 +60,13 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
         return Math.min(quantityIsUseVolumn, quantityIsUseWeight);
     }
 
+    const isChoose = (location: StorageLocation) => {
+        return location.id === props.productIsCheck.find((product) => product.location.value === location.id)?.location.value
+    }
+
     const isDisabled = (location: StorageLocation) => {
         let quantityIsUse = getQuantityIsUse(location);
+        if (isChoose(location)) return false;
         if (quantityIsUse < (props.quantity * valueConvertUnit)) return true;
         if (location.occupied && props.receiveItem?.product.id !== location.skus?.productDetails?.product?.id) return true;
     }
@@ -116,7 +123,7 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <TouchableOpacity
-                            disabled={isDisabled(item)}
+                            disabled={isDisabled(item) || isChoose(item)}
                             onPress={() => {
                                 props.setLocationSelect({
                                     value: item.id,
@@ -133,7 +140,7 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                                 marginBottom: 10,
                                 borderRadius: 5,
                                 position: "relative",
-                                opacity: isDisabled(item) ? 0.5 : 1
+                                opacity: (isChoose(item) || isDisabled(item)) ? 0.5 : 1
                             }}
                         >
                             <Text
@@ -174,16 +181,27 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                                 Có thể chứa: {getQuantityIsUse(item)} {props.receiveItem?.product.units.find((unit) => unit.isBaseUnit)?.name}
                             </Text>
                             {
-                                isDisabled(item) &&
-                                <Text
-                                    style={{
-                                        position: "absolute",
-                                        top: 20,
-                                        left: 50,
-                                    }}
-                                >
-                                    <FontAwesome name="ban" size={80} color="white" />
-                                </Text>
+                                isChoose(item) ?
+                                    <Text
+                                        style={{
+                                            position: "absolute",
+                                            top: 20,
+                                            left: 50,
+                                        }}
+                                    >
+                                        <AntDesign name="checkcircle" size={80} color="white" />
+                                    </Text>
+                                    :
+                                    isDisabled(item) &&
+                                    <Text
+                                        style={{
+                                            position: "absolute",
+                                            top: 20,
+                                            left: 50,
+                                        }}
+                                    >
+                                        <FontAwesome name="ban" size={80} color="white" />
+                                    </Text>
                             }
                         </TouchableOpacity>
                     )}
