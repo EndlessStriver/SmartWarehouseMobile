@@ -38,7 +38,7 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
 
     useEffect(() => {
         if (props.receiveItem) {
-            ConvertUnit(props.receiveItem.product.units[0].id, props.quantity)
+            ConvertUnit(props.receiveItem.unit.id, props.quantity)
                 .then((res) => {
                     setValueConvertUnit(res);
                 })
@@ -178,7 +178,7 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                                     color: "#fff",
                                 }}
                             >
-                                Có thể chứa: {getQuantityIsUse(item)} {props.receiveItem?.product.units.find((unit) => unit.isBaseUnit)?.name}
+                                Có thể chứa: {getQuantityIsUse(item)} {props.receiveItem?.unit.name}
                             </Text>
                             {
                                 isChoose(item) ?

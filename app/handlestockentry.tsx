@@ -1,8 +1,8 @@
 import CreateReceiveCheck from "@/service/CreateReceiveCheck";
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
-import GetStockEntryById, { ReceiveOrder } from "@/service/GetStockEntryById";
+import GetStockEntryById, { GoodsReceipt } from "@/service/GetStockEntryById";
 import FormatDate from "@/unit/FormatDate";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import ModalAddProductCheck from "./handlestockentrycomp/ModalAddProductCheck";
@@ -19,7 +19,7 @@ const HandleStockEntry = () => {
 
     const [user, setUser] = useState<User>();
     const { receiveId } = useLocalSearchParams<{ receiveId: string }>();
-    const [receiveOrder, setReceiveOrder] = useState<ReceiveOrder>();
+    const [receiveOrder, setReceiveOrder] = useState<GoodsReceipt>();
     const [loading, setLoading] = useState(true);
     const [isModalVisible, setModalVisible] = useState(false);
     const [productIsCheck, setProductIsCheck] = useState<ProductIsCheckType[]>([]);
@@ -131,15 +131,35 @@ const HandleStockEntry = () => {
                                     {receiveOrder?.supplier.name}
                                 </Text>
                             </View>
-                            <TouchableOpacity
-                                disabled={productIsCheck.length === 0}
-                                onPress={handleSubmit}
+                            <View
                                 style={{
-                                    opacity: productIsCheck.length === 0 ? 0.5 : 1,
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    gap: 10,
                                 }}
                             >
-                                <Text style={{ color: "#3498db", fontWeight: "bold" }}>Xác nhận</Text>
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: "/createstockentry",
+                                            params: {
+                                                receiveId: receiveOrder?.id
+                                            }
+                                        })
+                                    }}
+                                >
+                                    <Text style={{ color: "red", fontWeight: "bold" }}>Chỉnh sửa</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    disabled={productIsCheck.length === 0}
+                                    onPress={handleSubmit}
+                                    style={{
+                                        opacity: productIsCheck.length === 0 ? 0.5 : 1,
+                                    }}
+                                >
+                                    <Text style={{ color: "#3498db", fontWeight: "bold" }}>Xác nhận</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                         <View
                             style={{

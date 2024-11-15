@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { Alert, FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
 import ModalOptionLocation from "./ModalOptionLocation";
 import { LocationType } from "./ModalAddLocationProductCheck";
-import { ReceiveItem } from "@/service/GetStockEntryById";
 import { ProductIsCheckType } from "../handlestockentry";
 import Checkbox from "expo-checkbox";
 import GetAllShelf from "@/service/GetAllShelf";
+import { ReceiveItem } from "@/service/GetStockEntryById";
 
 interface ModalOptionShelfProps {
     isModalVisible: boolean;

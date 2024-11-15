@@ -1,6 +1,26 @@
 import { getData } from "@/unit/MyLocalStorage";
 import axios from "axios";
 
+interface Supplier {
+    id: string;
+    create_at: string;
+    update_at: string;
+    isDeleted: boolean;
+    name: string;
+    description: string;
+    phone: string;
+    email: string;
+    address: string;
+    supplierCode: string;
+    contactPerson: string;
+    location: string;
+    status: boolean;
+    notes: string;
+    website: string;
+    taxId: string;
+    isActive: boolean;
+}
+
 interface Category {
     id: string;
     create_at: string;
@@ -33,7 +53,7 @@ interface Product {
     units: Unit[];
 }
 
-interface SKU {
+interface Sku {
     id: string;
     create_at: string;
     update_at: string;
@@ -51,31 +71,12 @@ export interface ReceiveItem {
     update_at: string;
     isDeleted: boolean;
     quantity: number;
-    sku: SKU;
+    sku: Sku;
     product: Product;
+    unit: Unit;
 }
 
-interface Supplier {
-    id: string;
-    create_at: string;
-    update_at: string;
-    isDeleted: boolean;
-    name: string;
-    description: string;
-    phone: string;
-    email: string;
-    address: string;
-    supplierCode: string;
-    contactPerson: string;
-    location: string;
-    status: boolean;
-    notes: string;
-    website: string;
-    taxId: string;
-    isActive: boolean;
-}
-
-export interface ReceiveOrder {
+export interface GoodsReceipt {
     id: string;
     create_at: string;
     update_at: string;
@@ -91,7 +92,8 @@ export interface ReceiveOrder {
     receiveItems: ReceiveItem[];
 }
 
-const GetStockEntryById = async (stockEntryId: string): Promise<ReceiveOrder> => {
+
+const GetStockEntryById = async (stockEntryId: string): Promise<GoodsReceipt> => {
     try {
         const HOST = process.env.EXPO_PUBLIC_API_URL;
         const token = await getData('token');

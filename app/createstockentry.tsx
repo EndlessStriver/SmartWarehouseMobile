@@ -8,10 +8,15 @@ import { Picker } from '@react-native-picker/picker';
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
 import FormatDate from "@/unit/FormatDate";
 import CreateStockEntryAPI from "@/service/CreateStockEntryAPI";
-import { router } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import GetStockEntryById from "@/service/GetStockEntryById";
+import UpdateStockEntryAPI from "@/service/UpdateStockEntryAPI";
 
 const CreateStockEntry = () => {
 
+    const navigation = useNavigation();
+
+    const { receiveId } = useLocalSearchParams<{ receiveId: string }>();
     const [user, setUser] = useState<User>();
     const [supplier, setSupplier] = useState<{ value: string, lable: string }>();
     const [note, setNote] = useState('');
@@ -19,7 +24,32 @@ const CreateStockEntry = () => {
     const [isModalVisibleProduct, setModalVisibleProduct] = useState(false);
     const [productChecks, setProductChecks] = useState<ProductStocEntry[]>([]);
     const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (receiveId) {
+            GetStockEntryById(receiveId)
+                .then((res) => {
+                    setSupplier({
+                        value: res.supplier.id,
+                        lable: res.supplier.name,
+                    });
+                    setProductChecks(res.receiveItems.map((item) => ({
+                        productId: item.product.id,
+                        productName: item.product.name,
+                        quantity: item.quantity,
+                        currentUnit: item.unit.id,
+                        units: item.product.units.map((unit) => {
+                            return {
+                                unitId: unit.id,
+                                unitName: unit.name,
+                            }
+                        }),
+                        skuId: item.sku.id
+                    })))
+                    setNote(res.description);
+                })
+        }
+    }, [receiveId])
 
     useLayoutEffect(() => {
         GetAccountInformationCurrent()
@@ -30,12 +60,6 @@ const CreateStockEntry = () => {
                 Alert.alert("Lỗi", err.message);
             })
     }, [])
-
-    useEffect(() => {
-        if (supplier) {
-            setProductChecks([]);
-        }
-    }, [supplier])
 
     const addProductCheck = (product: ProductStocEntry) => {
         setProductChecks([...productChecks, product]);
@@ -81,6 +105,11 @@ const CreateStockEntry = () => {
         setProductChecks(newProductChecks);
     }
 
+    const addNewSupplier = (value: string, lable: string) => {
+        setSupplier({ value, lable });
+        setProductChecks([]);
+    }
+
     const handleSubmit = () => {
         if (!supplier) {
             Alert.alert("Lỗi", "Vui lòng chọn nhà cung cấp");
@@ -95,27 +124,62 @@ const CreateStockEntry = () => {
             return;
         }
         setLoading(true);
-        CreateStockEntryAPI({
-            receiveBy: user?.fullName || "",
-            receiveDate: new Date().toString(),
-            supplierId: supplier?.value || "",
-            description: note,
-            receiveItems: productChecks.map((product) => ({
-                productId: product.productId,
-                quantity: product.quantity,
-                unitId: product.currentUnit,
-                skuId: product.skuId,
-            }))
-        })
-            .then(() => {
-                Alert.alert("Thành công", "Tạo phiếu nhập kho thành công");
-                router.replace("/stockentry")
+        if (receiveId) {
+            UpdateStockEntryAPI({
+                receiveBy: user?.fullName || "",
+                receiveDate: new Date().toString(),
+                description: note,
+                receiveItems: productChecks.map((product) => ({
+                    productId: product.productId,
+                    quantity: product.quantity,
+                    unitId: product.currentUnit,
+                    skuId: product.skuId,
+                }))
+            }, receiveId)
+                .then(() => {
+                    Alert.alert("Thành công", "Cập nhật phiếu nhập kho thành công");
+                    navigation.reset({
+                        index: 1,
+                        routes: [
+                            { name: "home" as never },
+                            { name: "stockentry" as never }
+                        ]
+                    })
+                })
+                .catch((err) => {
+                    console.log(err);
+                    Alert.alert("Lỗi", err.message);
+                })
+                .finally(() => setLoading(false));
+        } else {
+            CreateStockEntryAPI({
+                receiveBy: user?.fullName || "",
+                receiveDate: new Date().toString(),
+                supplierId: supplier?.value || "",
+                description: note,
+                receiveItems: productChecks.map((product) => ({
+                    productId: product.productId,
+                    quantity: product.quantity,
+                    unitId: product.currentUnit,
+                    skuId: product.skuId,
+                }))
             })
-            .catch((err) => {
-                console.log(err);
-                Alert.alert("Lỗi", err.message);
-            })
-            .finally(() => setLoading(false));
+                .then(() => {
+                    Alert.alert("Thành công", "Tạo phiếu nhập kho thành công");
+                    navigation.reset({
+                        index: 1,
+                        routes: [
+                            { name: "home" as never },
+                            { name: "stockentry" as never }
+                        ]
+                    })
+                })
+                .catch((err) => {
+                    console.log(err);
+                    Alert.alert("Lỗi", err.message);
+                })
+                .finally(() => setLoading(false));
+        }
     }
 
     return (
@@ -157,11 +221,15 @@ const CreateStockEntry = () => {
                                     }}
                                 >
                                     <Text>{supplier ? supplier.lable : ""}</Text>
-                                    <TouchableOpacity
-                                        onPress={() => setModalVisibleProduct(true)}
-                                    >
-                                        <FontAwesome name="edit" size={16} color="black" />
-                                    </TouchableOpacity>
+                                    {
+                                        !receiveId && (
+                                            <TouchableOpacity
+                                                onPress={() => setModalVisibleProduct(true)}
+                                            >
+                                                <FontAwesome name="edit" size={16} color="black" />
+                                            </TouchableOpacity>
+                                        )
+                                    }
                                 </View>
                             )
                         }
@@ -182,16 +250,14 @@ const CreateStockEntry = () => {
                         disabled={!supplier || productChecks.length === 0}
                     >
                         <Text style={{
-                            backgroundColor: "#3498db",
-                            color: "#fff",
-                            padding: 10,
-                            borderRadius: 5,
+                            fontSize: 18,
+                            color: "#3498db",
                             fontWeight: "bold",
                             textAlign: "center",
                             width: "100%",
                             opacity: supplier && productChecks.length > 0 ? 1 : 0.5
                         }}>
-                            {loading ? "Đang tạo..." : "Tạo"}
+                            {loading ? "Đang xử lý..." : receiveId ? "Cập nhật" : "Tạo"}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -259,13 +325,14 @@ const CreateStockEntry = () => {
                                         justifyContent: "space-between",
                                         alignItems: "center",
                                         marginBottom: 10,
+                                        width: "100%",
                                     }}
                                 >
                                     <Text style={{ fontWeight: "600" }}>{item.productName}</Text>
                                     <View style={{ flexDirection: "row" }}>
                                         <TextInput
                                             style={{
-                                                width: 100,
+                                                width: 150,
                                                 height: 30,
                                                 borderWidth: 1,
                                                 padding: 5,
@@ -273,11 +340,11 @@ const CreateStockEntry = () => {
                                                 borderColor: "gray",
                                                 color: "black",
                                                 borderRadius: 5,
-                                                backgroundColor: "#fff"
+                                                backgroundColor: "#fff",
                                             }}
                                             onChangeText={(value) => updateQuantityProductCheck(item.productId, parseInt(value))}
                                             value={item.quantity.toString()}
-                                            placeholder="Số lượng"
+                                            placeholder="Số lượng nhập ..."
                                         />
                                         <TouchableOpacity
                                             style={{ marginLeft: 10 }}
@@ -318,7 +385,7 @@ const CreateStockEntry = () => {
             <ModalFindSupplier
                 isModalVisible={isModalVisibleProduct}
                 setModalVisible={setModalVisibleProduct}
-                setSupplier={setSupplier}
+                setSupplier={addNewSupplier}
             />
         </View>
     )
@@ -486,7 +553,7 @@ const ModalListProductSupplier: React.FC<ModalListProductSupplierProps> = (props
 interface ModalFindSupplierProps {
     isModalVisible: boolean;
     setModalVisible: (value: boolean) => void;
-    setSupplier: (value: { value: string, lable: string }) => void;
+    setSupplier: (value: string, lable: string) => void;
 }
 
 const ModalFindSupplier: React.FC<ModalFindSupplierProps> = (props) => {
@@ -575,7 +642,7 @@ const ModalFindSupplier: React.FC<ModalFindSupplierProps> = (props) => {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             onPress={() => {
-                                props.setSupplier({ value: item.id, lable: item.name });
+                                props.setSupplier(item.id, item.name);
                                 setSupplierName("");
                                 props.setModalVisible(false);
                             }}
