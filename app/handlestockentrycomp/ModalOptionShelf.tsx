@@ -6,6 +6,8 @@ import ModalOptionLocation from "./ModalOptionLocation";
 import { LocationType } from "./ModalAddLocationProductCheck";
 import { ReceiveItem } from "@/service/GetStockEntryById";
 import { ProductIsCheckType } from "../handlestockentry";
+import Checkbox from "expo-checkbox";
+import GetAllShelf from "@/service/GetAllShelf";
 
 interface ModalOptionShelfProps {
     isModalVisible: boolean;
@@ -28,10 +30,26 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
     });
     const [selectedShelf, setSelectedShelf] = useState<Shelf | null>(null);
     const [isModalLocationVisible, setIsModalLocationVisible] = useState(false);
+    const [isChecked, setChecked] = useState(false);
 
     useEffect(() => {
-        if (props.categoryName && props.typeShelf) {
-            GetShelfByCategoryNameAndTypeShelf(props.categoryName, props.typeShelf, navigation.offset, navigation.limit)
+        if (!isChecked) {
+            if (props.categoryName && props.typeShelf) {
+                GetShelfByCategoryNameAndTypeShelf(props.categoryName, props.typeShelf, navigation.offset, navigation.limit)
+                    .then((res) => {
+                        setShelfs(res.data)
+                        setNavigation({
+                            limit: res.limit,
+                            offset: res.offset,
+                            totalPage: res.totalPage
+                        })
+                    })
+                    .catch((err) => {
+                        Alert.alert("Error", err.message)
+                    })
+            }
+        } else {
+            GetAllShelf(navigation.limit, navigation.offset)
                 .then((res) => {
                     setShelfs(res.data)
                     setNavigation({
@@ -44,7 +62,7 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
                     Alert.alert("Error", err.message)
                 })
         }
-    }, [props.categoryName, props.typeShelf, navigation.offset, navigation.limit])
+    }, [props.categoryName, props.typeShelf, navigation.offset, navigation.limit, isChecked])
 
     return (
         <Modal
@@ -83,6 +101,20 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
                     >
                         <FontAwesome name="close" size={24} color="black" />
                     </TouchableOpacity>
+                </View>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        gap: 10,
+                        marginBottom: 10,
+                    }}
+                >
+                    <Checkbox
+                        value={isChecked}
+                        onValueChange={setChecked}
+                        color={isChecked ? '#4630EB' : undefined}
+                    />
+                    <Text>Lấy tất cả kệ</Text>
                 </View>
                 <FlatList
                     style={{ width: "100%" }}
