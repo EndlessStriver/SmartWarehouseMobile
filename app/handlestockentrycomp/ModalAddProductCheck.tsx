@@ -1,4 +1,4 @@
-import { ReceiveItem, ReceiveOrder } from "@/service/GetStockEntryById";
+import { GoodsReceipt, ReceiveItem } from "@/service/GetStockEntryById";
 import { ProductIsCheckType } from "../handlestockentry";
 import { useState } from "react";
 import { FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
@@ -8,7 +8,7 @@ import ModalAddLocationProductCheck from "./ModalAddLocationProductCheck";
 interface ModalAddProductCheckProps {
     isModalVisible: boolean;
     setModalVisible: (value: boolean) => void;
-    receiveOrder?: ReceiveOrder;
+    receiveOrder?: GoodsReceipt;
     addProductIsCheck: (product: ProductIsCheckType) => void;
     checkQuantityInbound: (receiveItemId: string) => number;
     productIsCheck: ProductIsCheckType[];

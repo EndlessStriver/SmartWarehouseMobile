@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-
 export default function RootLayout() {
   return (
     <Stack
@@ -92,6 +91,13 @@ export default function RootLayout() {
         options={{
           headerShown: true,
           title: "Chi Tiết Phiếu Xuất Kho",
+        }}
+      />
+      <Stack.Screen
+        name="createorderexport"
+        options={{
+          headerShown: true,
+          title: "Tạo Phiếu Xuất Kho",
         }}
       />
     </Stack>

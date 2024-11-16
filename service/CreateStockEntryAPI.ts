@@ -8,7 +8,7 @@ interface ReceiveItem {
     skuId: string;
 }
 
-interface ReceiveOrder {
+export interface ReceiveOrder {
     receiveDate: string;
     receiveBy: string;
     description: string;
