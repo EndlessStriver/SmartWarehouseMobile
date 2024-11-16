@@ -27,7 +27,7 @@ const Home = () => {
             <TouchableOpacity
                 style={style.buttonfnc}
                 onPress={() => {
-                    router.push('/stockentry')
+                    router.push('/orderexport')
                 }}
             >
                 <MaterialCommunityIcons name="exit-to-app" size={24} color={"black"} />

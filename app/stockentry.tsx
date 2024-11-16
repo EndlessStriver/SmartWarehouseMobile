@@ -89,8 +89,7 @@ const StockEntry: React.FC = () => {
                         <Text style={{
                             position: 'absolute',
                             right: 10,
-                            top: 10,
-                            fontWeight: '600',
+                            top: 10
                         }}>
                             {item.status === "COMPLETERECEIVECHECK" ? "Đã nhập kho" : (item.status === "PENDING") ? "Chờ Xử Lý" : "Đã hủy"}
                         </Text>

@@ -21,7 +21,6 @@ export default function RootLayout() {
         options={{
           headerShown: false,
           title: "Đăng Nhập",
-
         }}
       />
       <Stack.Screen
@@ -79,6 +78,20 @@ export default function RootLayout() {
         options={{
           headerShown: true,
           title: "Xử lý Phiếu Nhập Kho",
+        }}
+      />
+      <Stack.Screen
+        name="orderexport"
+        options={{
+          headerShown: true,
+          title: "Xuất Kho",
+        }}
+      />
+      <Stack.Screen
+        name="orderexportdetail"
+        options={{
+          headerShown: true,
+          title: "Chi Tiết Phiếu Xuất Kho",
         }}
       />
     </Stack>
