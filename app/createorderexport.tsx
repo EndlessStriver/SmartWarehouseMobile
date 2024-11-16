@@ -3,6 +3,8 @@ import FormatDate from "@/unit/FormatDate";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import ModalListProductWarehouse from "./handleorderexportcomp/ModalListProductWarehouse";
+import CreateOrderExportAPI from "@/service/CreateOrderExportAPI";
+import { useNavigation } from "expo-router";
 
 interface LocationExport {
     locationCode: string;
@@ -21,11 +23,13 @@ export interface ExportItem {
 }
 
 const CreateOrderExport = () => {
+    const navigation = useNavigation();
     const exportCode = generateExportCode();
     const [user, setUser] = useState<User>();
     const [note, setNote] = useState<string>('');
     const [productExports, setProductExports] = useState<ExportItem[]>([]);
     const [modalVisiable, setModalVisiable] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         GetAccountInformationCurrent()
@@ -50,9 +54,22 @@ const CreateOrderExport = () => {
     }
 
     const addExportItem = (item: ExportItem) => {
+        let check = false
         const newProductExports = [...productExports];
-        newProductExports.push(item);
-        setProductExports(newProductExports);
+        const myproduct = newProductExports.map((product) => {
+            if (product.productId === item.productId && product.itemStatus === item.itemStatus) {
+                check = true;
+                return item;
+            } else {
+                return product;
+            }
+        })
+        if (!check) {
+            myproduct.push(item);
+            setProductExports(myproduct);
+        } else {
+            setProductExports(myproduct);
+        }
     }
 
     const removeExportItem = (index: number) => {
@@ -61,20 +78,77 @@ const CreateOrderExport = () => {
         setProductExports(newProductExports);
     }
 
+    const handleSubmit = () => {
+        setLoading(true);
+        CreateOrderExportAPI({
+            description: note,
+            exportBy: user?.fullName || '',
+            exportCode: exportCode,
+            exportDate: new Date().toString(),
+            orderExportDetails: productExports.map((product) => ({
+                itemStatus: product.itemStatus,
+                locationExport: product.locationExport,
+                productId: product.productId,
+                skuId: product.skuId,
+                totalQuantity: product.totalQuantity,
+                unitId: product.unitId
+            }))
+        }).then(() => {
+            Alert.alert('Thành công', 'Tạo phiếu xuất thành công');
+            navigation.reset({
+                index: 1,
+                routes: [
+                    { name: 'home' as never },
+                    { name: 'orderexport' as never }
+                ]
+            })
+        }).catch((err) => {
+            console.log(err);
+            Alert.alert('Lỗi', 'Không thể tạo phiếu xuất');
+        }).finally(() => {
+            setLoading(false);
+        })
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={{ marginBottom: 5 }}>
-                <Text style={{ fontWeight: "bold" }}>Mã phiếu xuất: </Text>
-                {exportCode}
-            </Text>
-            <Text style={{ marginBottom: 5 }}>
-                <Text style={{ fontWeight: "bold" }}>Người tạo: </Text>
-                {user?.fullName}
-            </Text>
-            <Text style={{ marginBottom: 5 }}>
-                <Text style={{ fontWeight: "bold" }}>Ngày tạo: </Text>
-                {FormatDate(new Date().toString())}
-            </Text>
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: '100%',
+                    marginBottom: 10
+                }}
+            >
+                <View>
+                    <Text style={{ marginBottom: 5 }}>
+                        <Text style={{ fontWeight: "bold" }}>Mã phiếu xuất: </Text>
+                        {exportCode}
+                    </Text>
+                    <Text style={{ marginBottom: 5 }}>
+                        <Text style={{ fontWeight: "bold" }}>Người tạo: </Text>
+                        {user?.fullName}
+                    </Text>
+                    <Text style={{ marginBottom: 5 }}>
+                        <Text style={{ fontWeight: "bold" }}>Ngày tạo: </Text>
+                        {FormatDate(new Date().toString())}
+                    </Text>
+                </View>
+                <TouchableOpacity
+                    onPress={handleSubmit}
+                    disabled={productExports.length === 0 || loading}
+                >
+                    <Text style={{
+                        color: "blue",
+                        marginBottom: 5,
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        opacity: productExports.length === 0 || loading ? 0.5 : 1
+                    }}>
+                        {loading ? "Đang xử lý..." : "Tạo"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
             <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Ghi chú: </Text>
             <TextInput
                 placeholder="Nhập ghi chú nếu có ...."
@@ -177,6 +251,7 @@ const CreateOrderExport = () => {
                 modalVisiable={modalVisiable}
                 setModalVisiable={setModalVisiable}
                 addExportItem={addExportItem}
+                productExports={productExports}
             />
         </View>
     );
