@@ -1,85 +1,92 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from "expo-router";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 const Home = () => {
     return (
-        <View style={style.container} >
+        <View style={styles.container}>
             <TouchableOpacity
-                style={style.buttonfnc}
+                style={styles.buttonfnc}
                 onPress={() => {
-                    router.push('/barcodescanner')
+                    router.push('/barcodescanner');
                 }}
             >
-                <FontAwesome name="search" size={24} color={"black"} />
-                <Text style={style.textButton}>QR Code</Text>
+                <FontAwesome name="search" size={30} color="#3498db" />
+                <Text style={styles.textButton}>QR Code</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                style={style.buttonfnc}
+                style={styles.buttonfnc}
                 onPress={() => {
-                    router.push('/stockentry')
+                    router.push('/stockentry');
                 }}
             >
-                <MaterialIcons name="inventory" size={24} color={"black"} />
-                <Text style={style.textButton}>Nhập Kho</Text>
+                <MaterialIcons name="inventory" size={30} color="#3498db" />
+                <Text style={styles.textButton}>Nhập Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                style={style.buttonfnc}
+                style={styles.buttonfnc}
                 onPress={() => {
-                    router.push('/orderexport')
+                    router.push('/orderexport');
                 }}
             >
-                <MaterialCommunityIcons name="exit-to-app" size={24} color={"black"} />
-                <Text style={style.textButton}>Xuất Kho</Text>
+                <MaterialCommunityIcons name="exit-to-app" size={30} color="#3498db" />
+                <Text style={styles.textButton}>Xuất Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                style={style.buttonfnc}
+                style={styles.buttonfnc}
                 onPress={() => {
-                    router.push('/warehouse')
+                    router.push('/warehouse');
                 }}
             >
-                <MaterialCommunityIcons name="warehouse" size={24} color={"black"} />
-                <Text style={style.textButton}>Tồn Kho</Text>
+                <MaterialCommunityIcons name="warehouse" size={30} color="#3498db" />
+                <Text style={styles.textButton}>Tồn Kho</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                style={style.buttonfnc}
+                style={styles.buttonfnc}
                 onPress={() => {
-                    router.push('/warehouse')
+                    router.push('/warehouse');
                 }}
             >
-                <FontAwesome name="clipboard" size={24} color="black" />
-                <Text style={style.textButton}>Kiểm Kê</Text>
+                <FontAwesome name="clipboard" size={30} color="#3498db" />
+                <Text style={styles.textButton}>Kiểm Kê</Text>
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: "row",
         flexWrap: 'wrap',
         gap: 25,
         justifyContent: 'space-evenly',
-        padding: 10,
+        padding: 15,
+        backgroundColor: '#f7f7f7',
     },
     buttonfnc: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'white',
-        borderRadius: 5,
-        width: 150,
-        height: 150,
-        padding: 10,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        width: 160,
+        height: 160,
+        padding: 15,
+        elevation: 3, // For shadow effect on Android
+        shadowColor: '#000', // For iOS shadow
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
     },
     textButton: {
-        color: 'black',
-        fontSize: 18,
-        fontWeight: '600',
-        marginLeft: 10
-    }
-})
+        color: '#3498db',
+        fontSize: 16,
+        fontWeight: '500',
+        marginLeft: 10,
+        textAlign: 'center',
+    },
+});
 
-export default Home
+export default Home;
