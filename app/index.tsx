@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -35,20 +34,14 @@ export default function Index() {
   }
 
   return (
-    <View
-      style={styles.container}
-    >
-      <Text style={{
-        fontSize: 30,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: "#0984e3"
-      }}>LEON WARSEHOUSE</Text>
+    <View style={styles.container}>
+      <Text style={styles.headerText}>LEON WARHOUSE</Text>
       <TextInput
         style={styles.input}
         onChangeText={setUsername}
         value={username}
         placeholder="Nhập tên đăng nhập..."
+        placeholderTextColor="#95a5a6"
       />
       <TextInput
         style={styles.input}
@@ -56,19 +49,10 @@ export default function Index() {
         value={password}
         placeholder="Nhập mật khẩu..."
         secureTextEntry={true}
+        placeholderTextColor="#95a5a6"
       />
-      <TouchableOpacity
-        onPress={login}
-        style={{
-          backgroundColor: "#3498db",
-          width: '100%',
-          height: 45,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: 10,
-        }}
-      >
-        <Text style={{ color: 'white', fontSize: 18 }}>Đăng Nhập</Text>
+      <TouchableOpacity onPress={login} style={styles.loginButton}>
+        <Text style={styles.loginButtonText}>Đăng Nhập</Text>
       </TouchableOpacity>
     </View>
   );
@@ -82,17 +66,37 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ecf0f1',
   },
-  lableLogin: {
-    fontSize: 24,
+  headerText: {
+    fontSize: 32,
     fontWeight: 'bold',
+    marginBottom: 30,
+    color: "#0984e3",
+    textAlign: 'center',
   },
   input: {
     width: '100%',
     height: 50,
-    margin: 12,
+    marginVertical: 10,
+    paddingHorizontal: 15,
     borderWidth: 1,
-    padding: 10,
+    borderColor: "#bdc3c7",
     borderRadius: 10,
-    borderColor: "gray"
+    fontSize: 16,
+    color: "#2c3e50",
+    backgroundColor: "#fff",
+  },
+  loginButton: {
+    backgroundColor: "#3498db",
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  loginButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '500',
   }
 });
