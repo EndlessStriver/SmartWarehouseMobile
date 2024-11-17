@@ -117,53 +117,68 @@ const CreateOrderExport = () => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     width: '100%',
-                    marginBottom: 10
                 }}
             >
                 <View>
-                    <Text style={{ marginBottom: 5 }}>
+                    <Text style={{ marginBottom: 8, fontSize: 14 }}>
                         <Text style={{ fontWeight: "bold" }}>Mã phiếu xuất: </Text>
                         {exportCode}
                     </Text>
-                    <Text style={{ marginBottom: 5 }}>
+                    <Text style={{ marginBottom: 8, fontSize: 14 }}>
                         <Text style={{ fontWeight: "bold" }}>Người tạo: </Text>
                         {user?.fullName}
                     </Text>
-                    <Text style={{ marginBottom: 5 }}>
+                    <Text style={{ marginBottom: 8, fontSize: 14 }}>
                         <Text style={{ fontWeight: "bold" }}>Ngày tạo: </Text>
                         {FormatDate(new Date().toString())}
                     </Text>
                 </View>
-                <TouchableOpacity
-                    onPress={handleSubmit}
-                    disabled={productExports.length === 0 || loading}
-                >
-                    <Text style={{
-                        color: "blue",
-                        marginBottom: 5,
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        opacity: productExports.length === 0 || loading ? 0.5 : 1
-                    }}>
-                        {loading ? "Đang xử lý..." : "Tạo"}
-                    </Text>
-                </TouchableOpacity>
+                <View>
+                    <TouchableOpacity
+                        onPress={handleSubmit}
+                        disabled={productExports.length === 0 || loading}
+                        style={{
+                            backgroundColor: "white",
+                            padding: 10,
+                            borderRadius: 8,
+                            opacity: productExports.length === 0 || loading ? 0.5 : 1
+                        }}
+                    >
+                        <Text style={{
+                            color: "#3498db",
+                            fontWeight: "bold",
+                            fontSize: 16,
+                            textAlign: "center"
+                        }}>
+                            {loading ? "Đang xử lý..." : "Tạo phiếu"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Ghi chú: </Text>
+
+            <Text style={{ fontWeight: "bold", marginBottom: 8, fontSize: 16 }}>Ghi chú:</Text>
             <TextInput
                 placeholder="Nhập ghi chú nếu có ...."
-                style={styles.input}
+                style={{
+                    ...styles.input,
+                    padding: 10,
+                    fontSize: 14,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    marginBottom: 15
+                }}
                 onChangeText={setNote}
                 value={note}
             />
+
             <View
                 style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    alignItems: "flex-end",
+                    alignItems: "center",
                     width: '100%',
-                    marginTop: 10,
-                    marginBottom: 5
+                    marginBottom: 15
                 }}
             >
                 <Text style={{ fontWeight: "bold", fontSize: 16 }}>Danh sách sản phẩm xuất kho</Text>
@@ -171,82 +186,90 @@ const CreateOrderExport = () => {
                     onPress={() => setModalVisiable(true)}
                     style={{
                         backgroundColor: "#2ecc71",
-                        padding: 5,
+                        padding: 4,
                         borderRadius: 5,
+                        justifyContent: "center",
+                        alignItems: "center"
                     }}
                 >
-                    <Text style={{ fontWeight: "bold", color: "white" }}>Thêm +</Text>
+                    <Text style={{ fontWeight: "bold", color: "white", fontSize: 14 }}>Thêm +</Text>
                 </TouchableOpacity>
             </View>
-            {
-                productExports.length > 0 &&
+
+            {productExports.length > 0 ? (
                 <FlatList
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
                     style={{
                         width: '100%',
                     }}
                     data={productExports}
-                    keyExtractor={(item) => item.skuId}
+                    keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View
                             style={{
-                                marginBottom: 10,
+                                marginBottom: 15,
                                 backgroundColor: item.itemStatus ? "#2ecc71" : "#e74c3c",
-                                padding: 10,
-                                borderRadius: 5,
+                                padding: 12,
+                                borderRadius: 8,
+                                shadowColor: "#000",
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.3,
+                                shadowRadius: 4
                             }}
                         >
                             <View
                                 style={{
                                     flexDirection: "row",
                                     justifyContent: "space-between",
-                                    borderWidth: 1,
-                                    borderColor: item.itemStatus ? "#2ecc71" : "#e74c3c",
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: item.itemStatus ? "#2ecc71" : "#e74c3c",
+                                    paddingBottom: 8
                                 }}
                             >
-                                <View>
-                                    <Text>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontSize: 14 }}>
                                         <Text style={{ fontWeight: "bold" }}>Tên sản phẩm: </Text>
                                         {item.productName}
                                     </Text>
-                                    <Text>
+                                    <Text style={{ fontSize: 14 }}>
                                         <Text style={{ fontWeight: "bold" }}>Đơn vị tính: </Text>
                                         {item.unitName}
                                     </Text>
-                                    <Text>
+                                    <Text style={{ fontSize: 14 }}>
                                         <Text style={{ fontWeight: "bold" }}>Số lượng: </Text>
                                         {item.totalQuantity}
                                     </Text>
-                                    <Text>
+                                    <Text style={{ fontSize: 14 }}>
                                         <Text style={{ fontWeight: "bold" }}>Trạng thái: </Text>
                                         {item.itemStatus ? "Bình thường" : "Bị lỗi"}
                                     </Text>
-                                    <Text>
+                                    <Text style={{ fontSize: 14 }}>
                                         <Text style={{ fontWeight: "bold" }}>Vị trí xuất: </Text>
                                         {item.locationExport.map((location) => location.locationCode).join(', ')}
                                     </Text>
                                 </View>
-                                <View
-                                >
+                                <View style={{ justifyContent: "center", alignItems: "center" }}>
                                     <TouchableOpacity
                                         onPress={() => removeExportItem(productExports.indexOf(item))}
                                         style={{
                                             backgroundColor: "#e74c3c",
-                                            padding: 5,
-                                            borderRadius: 5,
+                                            paddingVertical: 6,
+                                            paddingHorizontal: 12,
+                                            borderRadius: 8,
                                         }}
                                     >
-                                        <Text style={{ color: "white" }}>Xóa</Text>
+                                        <Text style={{ color: "white", fontWeight: "bold" }}>Xóa</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
                     )}
                 />
-            }
-            {
-                productExports.length === 0 &&
-                <Text style={{ color: "red" }}>Chưa có sản phẩm xuất kho nào...</Text>
-            }
+            ) : (
+                <Text style={{ color: "red", textAlign: "center" }}>Chưa có sản phẩm xuất kho nào...</Text>
+            )}
+
             <ModalListProductWarehouse
                 modalVisiable={modalVisiable}
                 setModalVisiable={setModalVisiable}
