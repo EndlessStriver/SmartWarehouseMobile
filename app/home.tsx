@@ -60,7 +60,7 @@ const style = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         flexWrap: 'wrap',
-        gap: 10,
+        gap: 25,
         justifyContent: 'space-evenly',
         padding: 10,
     },
@@ -70,13 +70,13 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white',
         borderRadius: 5,
-        width: "100%",
-        height: 50,
+        width: 150,
+        height: 150,
         padding: 10,
     },
     textButton: {
         color: 'black',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '600',
         marginLeft: 10
     }

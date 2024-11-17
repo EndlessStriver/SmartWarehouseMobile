@@ -1,7 +1,7 @@
 import LoginService from "@/service/LoginService";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
 
@@ -39,7 +39,7 @@ export default function Index() {
       style={styles.container}
     >
       <Text style={{
-        fontSize: 36,
+        fontSize: 30,
         fontWeight: 'bold',
         marginBottom: 20,
         color: "#0984e3"
@@ -57,12 +57,19 @@ export default function Index() {
         placeholder="Nhập mật khẩu..."
         secureTextEntry={true}
       />
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Đăng Nhập"
-          onPress={() => login()}
-        />
-      </View>
+      <TouchableOpacity
+        onPress={login}
+        style={{
+          backgroundColor: "#3498db",
+          width: '100%',
+          height: 45,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 10,
+        }}
+      >
+        <Text style={{ color: 'white', fontSize: 18 }}>Đăng Nhập</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -86,10 +93,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
-  },
-  buttonContainer: {
-    width: '100%',
-    height: 40,
-    margin: 12,
+    borderColor: "gray"
   }
 });

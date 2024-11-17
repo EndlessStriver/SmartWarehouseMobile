@@ -66,6 +66,8 @@ const ProductListLocationDetail: React.FC<ProductListLocationDetailProps> = (pro
                     <Text style={{ marginBottom: 10 }}>Không có vị trí chứa sản phẩm</Text>
                     :
                     <FlatList
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
                         style={{
                             marginTop: 10,
                             width: '100%',

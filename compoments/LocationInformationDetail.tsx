@@ -22,8 +22,8 @@ const LocationInformationDetail: React.FC<LocationInformationDetailProps> = (pro
                 <Text style={styles.lable}>Trạng thái: </Text>
                 {
                     props.location?.occupied ?
-                        <Text style={{ color: 'red' }}>Đã chứa sản phẩm</Text> :
-                        <Text style={{ color: 'green' }}>Chưa chứa sản phẩm</Text>
+                        <Text style={{ color: 'red', fontWeight: "bold" }}>Đã chứa sản phẩm</Text> :
+                        <Text style={{ color: 'green', fontWeight: "bold" }}>Chưa chứa sản phẩm</Text>
                 }
             </View>
             <View style={styles.containerlable}>

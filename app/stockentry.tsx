@@ -48,7 +48,12 @@ const StockEntry: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.lable}>Danh Sách Phiếu Nhập Kho</Text>
+            <Text style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                marginBottom: 10,
+                color: "#34495e"
+            }}>Danh Sách Phiếu Nhập Kho</Text>
             <FlatList
                 style={{
                     width: '100%'
@@ -65,31 +70,47 @@ const StockEntry: React.FC = () => {
                                     params: {
                                         receiveId: item.id
                                     }
-                                })
+                                });
                             } else {
                                 router.push({
                                     pathname: '/handlestockentry',
                                     params: {
                                         receiveId: item.id
                                     }
-                                })
+                                });
                             }
                         }}
                         style={{
-                            padding: 10,
-                            marginBottom: 10,
-                            borderRadius: 5,
-                            backgroundColor: `${item.status === "COMPLETERECEIVECHECK" ? "#3498db" : (item.status === "PENDING") ? "#f1c40f" : "#e74c3c"}`,
+                            padding: 15,
+                            marginBottom: 12,
+                            borderRadius: 8,
+                            backgroundColor: item.status === "COMPLETERECEIVECHECK" ? "#2ecc71" : (item.status === "PENDING") ? "#f39c12" : "#e74c3c",
                             position: 'relative',
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 5,
+                            elevation: 3,
                         }}
+                        activeOpacity={0.7}
                     >
-                        <Text style={{ fontWeight: "600", color: "#ffffff" }}>{item.receiveCode}</Text>
-                        <Text style={{ fontWeight: "600", color: "#e74c3c" }}>{FormatDate(item.receiveDate)}</Text>
-                        <Text style={{ fontWeight: "600", color: "#34495e" }}>{item.receiveBy}</Text>
+                        <Text style={{ fontWeight: "600", color: "#ffffff", fontSize: 16 }}>{item.receiveCode}</Text>
+                        <Text style={{
+                            fontWeight: "600",
+                            color: item.status === "PENDING" ? "#c0392b" : "#f39c12",
+                            fontSize: 14
+                        }}>
+                            {FormatDate(item.receiveDate)}
+                        </Text>
+                        <Text style={{ fontWeight: "600", color: "#34495e", fontSize: 14 }}>{item.receiveBy}</Text>
                         <Text style={{
                             position: 'absolute',
                             right: 10,
-                            top: 10
+                            top: 10,
+                            fontWeight: "bold",
+                            color: "#ffffff",
+                            fontSize: 12,
+                            textTransform: 'uppercase',
                         }}>
                             {item.status === "COMPLETERECEIVECHECK" ? "Đã nhập kho" : (item.status === "PENDING") ? "Chờ Xử Lý" : "Đã hủy"}
                         </Text>
@@ -107,11 +128,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         padding: 10,
-    },
-    lable: {
-        fontSize: 18,
-        fontWeight: '600',
-        marginBottom: 10,
     },
 });
 
