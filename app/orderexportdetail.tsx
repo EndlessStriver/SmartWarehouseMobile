@@ -104,61 +104,71 @@ const OrderExportDetail = () => {
                         {orderExport?.description}
                     </Text>
                 </View>
-                <View>
-                    <TouchableOpacity
-                        onPress={() => {
-                            Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn hủy phiếu này?', [
-                                {
-                                    text: 'Hủy',
-                                    style: 'cancel'
-                                },
-                                {
-                                    text: 'Xác nhận',
-                                    onPress: () => cancelOrderExport()
-                                }
-                            ]);
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: "#fff",
-                                fontWeight: '600',
-                                backgroundColor: "#e74c3c",
-                                padding: 10,
-                                borderRadius: 5,
-                                textAlign: 'center',
-                                marginTop: 10,
+                {
+                    orderExport?.status === "PENDING" &&
+                    <View>
+                        <TouchableOpacity
+                            onPress={() => {
+                                Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn hủy phiếu này?', [
+                                    {
+                                        text: 'Hủy',
+                                        style: 'cancel'
+                                    },
+                                    {
+                                        text: 'Xác nhận',
+                                        onPress: () => cancelOrderExport()
+                                    }
+                                ]);
                             }}
-                        >Hủy phiếu</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => {
-                            Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn xuất kho phiếu này?', [
-                                {
-                                    text: 'Hủy',
-                                    style: 'cancel'
-                                },
-                                {
-                                    text: 'Xác nhận',
-                                    onPress: () => confirmOrderExport()
-                                }
-                            ]);
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: "#fff",
-                                fontWeight: '600',
-                                backgroundColor: "#2ecc71",
-                                padding: 10,
-                                borderRadius: 5,
-                                textAlign: 'center',
-                                marginTop: 10,
+                        >
+                            <Text
+                                style={{
+                                    color: "#fff",
+                                    fontWeight: '600',
+                                    backgroundColor: "#e74c3c",
+                                    padding: 10,
+                                    borderRadius: 5,
+                                    textAlign: 'center',
+                                    marginTop: 10,
+                                }}
+                            >Hủy phiếu</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+                                Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn xuất kho phiếu này?', [
+                                    {
+                                        text: 'Hủy',
+                                        style: 'cancel'
+                                    },
+                                    {
+                                        text: 'Xác nhận',
+                                        onPress: () => confirmOrderExport()
+                                    }
+                                ]);
                             }}
-                        >Xuất kho</Text>
-                    </TouchableOpacity>
-                </View>
+                        >
+                            <Text
+                                style={{
+                                    color: "#fff",
+                                    fontWeight: '600',
+                                    backgroundColor: "#2ecc71",
+                                    padding: 10,
+                                    borderRadius: 5,
+                                    textAlign: 'center',
+                                    marginTop: 10,
+                                }}
+                            >Xuất kho</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
             </View>
+            <Text
+                style={{
+                    fontSize: 18,
+                    fontWeight: '600',
+                    color: "#3498db"
+                }}
+            >Danh sách sản phẩm xuất kho</Text>
             <FlatList
                 style={{
                     width: '100%',
@@ -178,6 +188,10 @@ const OrderExportDetail = () => {
                         <Text>
                             <Text style={{ fontWeight: "bold" }}>Mã SKU: </Text>
                             {item.sku.skuCode}
+                        </Text>
+                        <Text>
+                            <Text style={{ fontWeight: "bold" }}>Tên sản phẩm: </Text>
+                            {item.product.name}
                         </Text>
                         <Text>
                             <Text style={{ fontWeight: "bold" }}>Số lượng: </Text>

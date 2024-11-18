@@ -76,7 +76,7 @@ const getStatusStyle = (status: string) => {
             return { backgroundColor: "#f1c40f" };
         case "EXPORTED":
             return { backgroundColor: "#2ecc71" };
-        case "CANCELLED":
+        case "CANCEL":
             return { backgroundColor: "#e74c3c" };
         default:
             return {};
@@ -89,7 +89,7 @@ const getStatusText = (status: string) => {
             return "Chờ xử lý";
         case "EXPORTED":
             return "Đã xuất kho";
-        case "CANCELLED":
+        case "CANCEL":
             return "Đã hủy";
         default:
             return "Không xác định";
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     },
     orderDate: {
         fontWeight: "600",
-        color: "#e74c3c",
+        color: "#e67e22",
     },
     orderBy: {
         fontWeight: "600",
