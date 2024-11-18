@@ -2,17 +2,14 @@ import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import FormatDate from "@/unit/FormatDate";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const StockEntry: React.FC = () => {
 
     const [receives, setReceives] = useState<ReceiveRecord[]>([]);
-    const [pagination, setPagination] = useState({
-        limit: 10,
-        offset: 1,
-        totalPage: 0,
-        totalElementOfPage: 0
-    });
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
 
     const navigation = useNavigation();
 
@@ -31,20 +28,33 @@ const StockEntry: React.FC = () => {
     }, [navigation])
 
     useEffect(() => {
-        GetReceives()
+        setLoading(true);
+        GetReceives(10, page)
             .then(data => {
-                setReceives(data.data);
-                setPagination({
-                    limit: data.limit,
-                    offset: data.offset,
-                    totalPage: data.totalPage,
-                    totalElementOfPage: data.totalElementOfPage
-                });
+                if (data.data.length === 0) {
+                    setHasMore(false);
+                } else {
+                    setReceives((preData) => [...preData, ...data.data]);
+                }
             })
             .catch(error => {
                 Alert.alert('Error', error.message);
             })
-    }, [])
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [page]);
+
+    const loadMore = () => {
+        if (!loading && hasMore) {
+            setPage((prePage) => prePage + 1);
+        }
+    }
+
+    const renderFooter = () => {
+        if (!loading) return null;
+        return <ActivityIndicator size="large" color="#3498db" />;
+    };
 
     return (
         <View style={styles.container}>
@@ -61,6 +71,9 @@ const StockEntry: React.FC = () => {
                 data={receives}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
+                ListFooterComponent={renderFooter}
+                onEndReachedThreshold={0.75}
+                onEndReached={loadMore}
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         onPress={() => {
