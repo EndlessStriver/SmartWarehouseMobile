@@ -2,7 +2,7 @@ import GetLocationByShelfId, { StorageLocation } from "@/service/GetLocationBySh
 import { Shelf } from "@/service/GetShelfByCategoryNameAndTypeShelf";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Alert, FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { LocationType } from "./ModalAddLocationProductCheck";
 import { ReceiveItem } from "@/service/GetStockEntryById";
 import ConvertUnit from "@/service/ConvertUnit";
@@ -77,48 +77,21 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
             onRequestClose={() => props.setModalVisible(false)}
             animationType="fade"
         >
-            <View
-                style={{
-                    flex: 1,
-                    padding: 10,
-                    alignItems: 'flex-start',
-                    backgroundColor: '#fff',
-                }}
-            >
-                <View
-                    style={{
-                        width: "100%",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 10,
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontSize: 20,
-                            fontWeight: "bold",
-                            color: "#3498db",
-                        }}
-                    >
-                        Danh Sách Vị Trí Kệ {props.shelf?.name || ""}
+            <View style={styles.modalContainer}>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.headerTitle}>
+                        Danh Sách Vị Trí Kệ {props.shelf?.name || ''}
                     </Text>
-                    <TouchableOpacity
-                        onPress={() => props.setModalVisible(false)}
-                    >
-                        <FontAwesome name="close" size={24} color="black" />
+                    <TouchableOpacity onPress={() => props.setModalVisible(false)}>
+                        <FontAwesome name="close" size={30} color="#333" />
                     </TouchableOpacity>
                 </View>
+
                 <FlatList
-                    style={{
-                        width: "100%",
-                    }}
                     data={locations}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     numColumns={2}
-                    columnWrapperStyle={{
-                        justifyContent: "space-between",
-                    }}
+                    columnWrapperStyle={styles.columnWrapper}
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
@@ -128,81 +101,39 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                                 props.setLocationSelect({
                                     value: item.id,
                                     lable: item.locationCode,
-                                    maxQuantityInbound: 0
+                                    maxQuantityInbound: 0,
                                 });
                                 props.setModalVisible(false);
                             }}
-                            style={{
-                                width: 180,
-                                height: 120,
-                                padding: 10,
-                                backgroundColor: item.occupied ? "#e74c3c" : "#2ecc71",
-                                marginBottom: 10,
-                                borderRadius: 5,
-                                position: "relative",
-                                opacity: (isChoose(item) || isDisabled(item)) ? 0.5 : 1
-                            }}
+                            style={[
+                                styles.locationContainer,
+                                {
+                                    backgroundColor: item.occupied ? '#e74c3c' : '#2ecc71',
+                                    opacity: isChoose(item) || isDisabled(item) ? 0.6 : 1,
+                                },
+                            ]}
                         >
-                            <Text
-                                style={{
-                                    fontSize: 16,
-                                    fontWeight: "bold",
-                                    color: "#fff",
-                                }}
-                            >
-                                {item.locationCode}
+                            <Text style={styles.locationCode}>{item.locationCode}</Text>
+                            <Text style={styles.productName}>
+                                {item.skus?.productDetails?.product?.name || 'Đang trống'}
                             </Text>
-                            <Text
-                                style={{
-                                    fontSize: 16,
-                                    color: "#fff",
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                {item.skus?.productDetails?.product?.name || "Đang trống"}
-                            </Text>
-                            {
-                                item.occupied &&
-                                <Text
-                                    style={{
-                                        fontWeight: "bold",
-                                        color: "#fff",
-                                    }}
-                                >
-                                    Số lượng: {item.quantity} {item.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name}
+                            {item.occupied && (
+                                <Text style={styles.occupiedQuantity}>
+                                    Đang chứa: {item.quantity} {item.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name}
                                 </Text>
-                            }
-                            <Text
-                                style={{
-                                    fontWeight: "bold",
-                                    color: "#fff",
-                                }}
-                            >
-                                Có thể chứa: {getQuantityIsUse(item)} {props.receiveItem?.unit.name}
+                            )}
+                            <Text style={styles.availableCapacity}>
+                                Có thể chứa: {Math.floor(getQuantityIsUse(item))} {props.receiveItem?.unit.name}
                             </Text>
-                            {
-                                isChoose(item) ?
-                                    <Text
-                                        style={{
-                                            position: "absolute",
-                                            top: 20,
-                                            left: 50,
-                                        }}
-                                    >
-                                        <AntDesign name="checkcircle" size={80} color="white" />
-                                    </Text>
-                                    :
-                                    isDisabled(item) &&
-                                    <Text
-                                        style={{
-                                            position: "absolute",
-                                            top: 20,
-                                            left: 50,
-                                        }}
-                                    >
-                                        <FontAwesome name="ban" size={80} color="white" />
-                                    </Text>
-                            }
+                            {isChoose(item) ? (
+                                <Text style={styles.checkIcon}>
+                                    <AntDesign name="checkcircle" size={80} color="white" />
+                                </Text>
+                            ) : isDisabled(item) ? (
+                                <Text style={styles.disabledIcon}>
+                                    <FontAwesome name="ban" size={80} color="white" />
+                                </Text>
+                            ) : null}
                         </TouchableOpacity>
                     )}
                 />
@@ -210,5 +141,71 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
         </Modal>
     )
 }
+
+const styles = StyleSheet.create({
+    modalContainer: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 10,
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    headerTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#3498db',
+    },
+    columnWrapper: {
+        justifyContent: 'space-between',
+    },
+    locationContainer: {
+        width: 160,
+        height: 140,
+        padding: 15,
+        marginBottom: 15,
+        borderRadius: 8,
+        justifyContent: 'space-between',
+        position: 'relative',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 5,
+    },
+    locationCode: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 5,
+    },
+    productName: {
+        fontSize: 14,
+        color: '#fff',
+        marginBottom: 5,
+    },
+    occupiedQuantity: {
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    availableCapacity: {
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    checkIcon: {
+        position: 'absolute',
+        top: 20,
+        left: 50,
+    },
+    disabledIcon: {
+        position: 'absolute',
+        top: 20,
+        left: 50,
+    },
+})
 
 export default ModalOptionLocation;
