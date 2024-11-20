@@ -114,6 +114,13 @@ export default function RootLayout() {
           title: "Tạo Phiếu Kiểm Kê",
         }}
       />
+      <Stack.Screen
+        name="iventorydetail"
+        options={{
+          headerShown: true,
+          title: "Chi Tiết Phiếu Kiểm Kê",
+        }}
+      />
     </Stack>
   );
 }

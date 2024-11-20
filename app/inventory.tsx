@@ -37,7 +37,16 @@ const Inventory: React.FC = () => {
                     data={inventories}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                        <View style={styles.card}>
+                        <TouchableOpacity style={styles.card}
+                            onPress={() => {
+                                router.push({
+                                    pathname: "/iventorydetail",
+                                    params: {
+                                        iventoryId: item.id,
+                                    }
+                                });
+                            }}
+                        >
                             <Text style={styles.label}>
                                 <Text style={styles.labelBold}>Mã phiếu: </Text>
                                 {item.id}
@@ -50,11 +59,7 @@ const Inventory: React.FC = () => {
                                 <Text style={styles.labelBold}>Ghi chú: </Text>
                                 {item.note || "Không có ghi chú"}
                             </Text>
-                            <Text style={styles.label}>
-                                <Text style={styles.labelBold}>Tổng số lượng: </Text>
-                                {item.quantity}
-                            </Text>
-                        </View>
+                        </TouchableOpacity>
                     )}
                 />
             )}

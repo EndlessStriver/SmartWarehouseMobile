@@ -124,7 +124,23 @@ const CreateInventory: React.FC = () => {
                 </Text>
                 <TouchableOpacity
                     disabled={loading}
-                    onPress={handleSubmit}
+                    onPress={() => {
+                        Alert.alert(
+                            "Xác Nhận",
+                            "Vui lòng xác nhận để hoàn thành kiểm kê!",
+                            [
+                                {
+                                    text: "Hủy",
+                                    style: "cancel",
+                                },
+                                {
+                                    text: "Xác nhận",
+                                    onPress: () => handleSubmit(),
+                                    style: "default",
+                                },
+                            ],
+                        );
+                    }}
                     style={{
                         backgroundColor: "#3498db",
                         padding: 5,
@@ -240,7 +256,7 @@ const CreateInventory: React.FC = () => {
                                                 }
                                                 return shelf;
                                             });
-                                            setShelfList(newShelfList);
+                                            setShelfList(newShelfList.reverse());
                                         }}
                                     />
                                 </View>
