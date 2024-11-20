@@ -1,7 +1,7 @@
 import { Product } from "@/service/GetProductsByNameAndCodeAndSupplierName";
 import { ExportItem } from "../createorderexport";
 import { useEffect, useState } from "react";
-import { Alert, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import GetLocationFIFO from "@/service/GetLocationFIFO";
 import { FontAwesome } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -95,129 +95,134 @@ const ModalAddExportItem: React.FC<ModalAddExportItemProps> = (props) => {
             onRequestClose={() => props.setModalVisiable(false)}
             animationType="fade"
         >
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "flex-start",
-                    padding: 10,
-                }}
-            >
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 10,
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontWeight: "bold",
-                            fontSize: 18,
-                            color: "#3498db"
-                        }}
-                    >Thêm Sản Phẩm Xuất Kho</Text>
-                    <TouchableOpacity
-                        onPress={() => {
-                            props.setModalVisiable(false);
-                        }}
-                    >
-                        <FontAwesome name="close" size={24} color="black" />
+            <View style={styles.modalContainer}>
+                <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>Thêm Sản Phẩm Xuất Kho</Text>
+                    <TouchableOpacity onPress={() => props.setModalVisiable(false)}>
+                        <FontAwesome name="close" size={24} color="#3498db" />
                     </TouchableOpacity>
                 </View>
-                <Text>
-                    <Text style={{ fontWeight: "bold" }}>Mã sản phẩm: </Text>
-                    {props.selectedProduct?.productCode}
+                <Text style={styles.productDetailText}>
+                    <Text style={styles.boldText}>Mã sản phẩm: </Text>{props.selectedProduct?.productCode}
                 </Text>
-                <Text>
-                    <Text style={{ fontWeight: "bold" }}>Tên sản phẩm: </Text>
-                    {props.selectedProduct?.name}
+                <Text style={styles.productDetailText}>
+                    <Text style={styles.boldText}>Tên sản phẩm: </Text>{props.selectedProduct?.name}
                 </Text>
-                <Text>
-                    <Text style={{ fontWeight: "bold" }}>Loại sản phẩm: </Text>
-                    {props.selectedProduct?.category.name}
+                <Text style={styles.productDetailText}>
+                    <Text style={styles.boldText}>Loại sản phẩm: </Text>{props.selectedProduct?.category.name}
                 </Text>
-                <Text>
-                    <Text style={{ fontWeight: "bold" }}>Số lượng tồn kho: </Text>
-                    {props.selectedProduct?.productDetails[0].quantity} sản phẩm
+                <Text style={styles.productDetailText}>
+                    <Text style={styles.boldText}>Số lượng tồn kho: </Text>{props.selectedProduct?.productDetails[0].quantity} sản phẩm
                 </Text>
-                <Text>
-                    <Text style={{ fontWeight: "bold" }}>Số lượng lỗi tồn kho: </Text>
-                    {props.selectedProduct?.productDetails[0].damagedQuantity} sản phẩm
+                <Text style={styles.productDetailText}>
+                    <Text style={styles.boldText}>Số lượng lỗi tồn kho: </Text>{props.selectedProduct?.productDetails[0].damagedQuantity} sản phẩm
                 </Text>
-                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Tình trạng sản phẩm:</Text>
+                <Text style={styles.boldText}>Tình trạng sản phẩm:</Text>
                 <Picker
-                    style={{
-                        backgroundColor: "gray",
-                    }}
+                    style={styles.picker}
                     selectedValue={statusProduct}
-                    onValueChange={(itemValue, itemIndex) =>
-                        setStatusProduct(itemValue)
-                    }>
+                    onValueChange={(itemValue) => setStatusProduct(itemValue)}
+                >
                     <Picker.Item label="Bình thường" value="NORMAL" />
                     <Picker.Item label="Bị hư hại" value="DAMAGED" />
                 </Picker>
-                <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Đơn vị tính:</Text>
+                <Text style={styles.boldText}>Đơn vị tính:</Text>
                 <Picker
-                    style={{
-                        backgroundColor: "gray",
-                    }}
+                    style={styles.picker}
                     selectedValue={unit}
-                    onValueChange={(itemValue, itemIndex) => {
-                        setUnit(itemValue)
-                        console.log(unit);
-                    }
-                    }>
-                    {
-                        props.selectedProduct?.units.map((unit) => (
-                            <Picker.Item
-                                key={unit.id}
-                                label={unit.name}
-                                value={unit.id}
-                            />
-                        ))
-                    }
+                    onValueChange={(itemValue) => setUnit(itemValue)}
+                >
+                    {props.selectedProduct?.units.map((unit) => (
+                        <Picker.Item key={unit.id} label={unit.name} value={unit.id} />
+                    ))}
                 </Picker>
-                <Text style={{ fontWeight: "bold", marginTop: 5 }}>Số lượng xuất kho:</Text>
+                <Text style={styles.boldText}>Số lượng xuất kho:</Text>
                 <TextInput
-                    style={{
-                        height: 40,
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        padding: 10,
-                        marginTop: 5,
-                    }}
+                    style={styles.input}
                     placeholder="Nhập số lượng sản phẩm xuất kho..."
                     value={quantityExport}
-                    onChangeText={(value) => updateQuantityExport(value)}
+                    onChangeText={updateQuantityExport}
                     keyboardType="numeric"
                 />
-                <Text style={{ fontWeight: "bold", marginTop: 5 }}>Kiểu xuất kho:</Text>
+                <Text style={styles.boldText}>Kiểu xuất kho:</Text>
                 <Picker
-                    style={{
-                        backgroundColor: "gray",
-                    }}
+                    style={styles.picker}
                     selectedValue={typeExport}
-                    onValueChange={(itemValue, itemIndex) =>
-                        setTypeExport(itemValue)
-                    }>
+                    onValueChange={(itemValue) => setTypeExport(itemValue)}
+                >
                     <Picker.Item label="Vào trước - Ra trước" value="FIFO" />
                     <Picker.Item label="Vào sau - Ra trước" value="LIFO" />
                 </Picker>
                 <TouchableOpacity
                     onPress={handleSubmit}
-                    style={{
-                        backgroundColor: "#3498db",
-                        padding: 10,
-                        borderRadius: 5,
-                        marginTop: 10,
-                    }}
+                    style={styles.submitButton}
                 >
-                    <Text style={{ color: "white", textAlign: "center" }}>Xác nhận</Text>
+                    <Text style={styles.submitButtonText}>Xác nhận</Text>
                 </TouchableOpacity>
             </View>
         </Modal>
     )
 }
+
+const styles = StyleSheet.create({
+    modalContainer: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 5,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 15,
+    },
+    modalTitle: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        color: '#3498db',
+    },
+    productDetailText: {
+        fontSize: 14,
+        marginVertical: 5,
+    },
+    boldText: {
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    picker: {
+        backgroundColor: '#f1f1f1',
+        borderRadius: 8,
+        marginBottom: 10,
+        padding: 8,
+    },
+    input: {
+        height: 40,
+        borderWidth: 1,
+        borderRadius: 8,
+        padding: 10,
+        marginBottom: 15,
+        backgroundColor: '#f8f8f8',
+        borderColor: '#ccc',
+        fontSize: 14,
+    },
+    submitButton: {
+        backgroundColor: '#3498db',
+        padding: 12,
+        borderRadius: 8,
+        marginTop: 15,
+        alignItems: 'center',
+    },
+    submitButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+});
 
 export default ModalAddExportItem;
