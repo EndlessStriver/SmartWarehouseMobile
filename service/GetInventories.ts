@@ -18,7 +18,7 @@ interface Inventory {
     inventoryDetail: InventoryDetail[];
 }
 
-interface Transaction {
+export interface Transaction {
     id: string;
     create_at: string;
     update_at: string;
