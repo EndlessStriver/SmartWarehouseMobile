@@ -8,7 +8,7 @@ import { Picker } from '@react-native-picker/picker';
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
 import FormatDate from "@/unit/FormatDate";
 import CreateStockEntryAPI from "@/service/CreateStockEntryAPI";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import GetStockEntryById from "@/service/GetStockEntryById";
 import UpdateStockEntryAPI from "@/service/UpdateStockEntryAPI";
 
@@ -184,37 +184,21 @@ const CreateStockEntry = () => {
 
     return (
         <View style={styles.container}>
-            <View style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                marginBottom: 15,
-            }}>
+            <View style={styles.headerSection}>
                 <View style={{ flex: 1 }}>
-                    <Text style={styles.containergroup}>
-                        <Text style={styles.fontweight}>Người tạo: </Text>
+                    <Text style={styles.infoText}>
+                        <Text style={styles.boldText}>Người tạo: </Text>
                         {user?.fullName || "N/A"}
                     </Text>
-                    <Text style={styles.containergroup}>
-                        <Text style={styles.fontweight}>Ngày tạo: </Text>
+                    <Text style={styles.infoText}>
+                        <Text style={styles.boldText}>Ngày tạo: </Text>
                         {FormatDate(new Date().toString())}
                     </Text>
 
-                    <View style={{
-                        flexDirection: "row",
-                        width: "100%",
-                        marginBottom: 10,
-                        alignItems: "center",
-                    }}>
-                        <Text style={{ fontSize: 14, fontWeight: "bold", marginRight: 10 }}>
-                            Nhà cung cấp:
-                        </Text>
+                    <View style={styles.supplierSection}>
+                        <Text style={styles.label}>Nhà cung cấp:</Text>
                         {supplier ? (
-                            <View style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 10,
-                            }}>
+                            <View style={styles.supplierInfo}>
                                 <Text>{supplier.lable || "N/A"}</Text>
                                 {!receiveId && (
                                     <TouchableOpacity onPress={() => setModalVisibleProduct(true)}>
@@ -224,191 +208,99 @@ const CreateStockEntry = () => {
                             </View>
                         ) : (
                             <TouchableOpacity onPress={() => setModalVisibleProduct(true)}>
-                                <Text style={{ color: "#e67e22", fontWeight: "bold" }}>Chọn nhà cung cấp</Text>
+                                <Text style={styles.selectSupplierText}>Chọn nhà cung cấp</Text>
                             </TouchableOpacity>
                         )}
                     </View>
                 </View>
 
-                <View style={{ justifyContent: "flex-end" }}>
-                    <TouchableOpacity
-                        onPress={handleSubmit}
-                        disabled={!supplier || productChecks.length === 0}
-                    >
-                        <Text style={{
-                            fontSize: 16,
-                            color: "#3498db",
-                            fontWeight: "bold",
-                            textAlign: "center",
+                <TouchableOpacity
+                    onPress={handleSubmit}
+                    disabled={!supplier || productChecks.length === 0}
+                    style={[
+                        {
                             opacity: supplier && productChecks.length > 0 ? 1 : 0.5,
-                            paddingVertical: 12,
-                            paddingHorizontal: 20,
-                            backgroundColor: "#f4f7fa",
-                            borderRadius: 25,
-                        }}>
-                            {loading ? "Đang xử lý..." : receiveId ? "Cập nhật" : "Tạo Phiếu"}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                        },
+                    ]}
+                >
+                    <Text style={styles.submitButtonText}>
+                        {loading ? "Đang xử lý..." : receiveId ? "Cập nhật" : "Tạo Phiếu"}
+                    </Text>
+                </TouchableOpacity>
             </View>
 
-            <Text style={styles.containergroup}>
-                <Text style={styles.fontweight}>Ghi chú:</Text>
+            <Text style={styles.infoText}>
+                <Text style={styles.boldText}>Ghi chú:</Text>
             </Text>
             <TextInput
-                style={[styles.input, {
-                    height: 100,
-                    padding: 15,
-                    textAlignVertical: 'top',
-                    borderRadius: 10,
-                }]}
+                style={styles.noteInput}
                 onChangeText={setNote}
                 value={note}
                 placeholder="Nhập ghi chú nếu có..."
             />
-            <View
-                style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                }}
-            >
-                <Text
-                    style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        color: "#3498db",
-                        marginTop: 10,
-                        marginBottom: 10,
-                        letterSpacing: 0.5,
-                    }}
-                >
-                    Danh sách sản phẩm nhập kho
-                </Text>
 
+            <View style={styles.productListHeader}>
+                <Text style={styles.productListTitle}>Danh sách sản phẩm nhập kho</Text>
                 <TouchableOpacity
                     disabled={!supplier}
-                    style={{
-                        opacity: supplier ? 1 : 0.5,
-                        backgroundColor: "#2ecc71",
-                        borderRadius: 20,
-                        paddingVertical: 8,
-                        paddingHorizontal: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
+                    style={[
+                        styles.addButton,
+                        {
+                            opacity: supplier ? 1 : 0.5,
+                        },
+                    ]}
                     onPress={() => setModalVisible(true)}
                 >
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            fontWeight: "600",
-                            color: "#fff",
-                            textAlign: "center",
-                        }}
-                    >
-                        + Thêm
-                    </Text>
+                    <Text style={styles.addButtonText}>+ Thêm</Text>
                 </TouchableOpacity>
             </View>
-            {
-                productChecks.length === 0 ?
-                    <Text style={{
-                        color: "red",
-                        fontWeight: "bold",
-                    }}>Chưa có sản phẩm nào được chọn....</Text> :
-                    <FlatList
-                        style={{
-                            width: "100%",
-                        }}
-                        data={productChecks}
-                        renderItem={({ item }) => (
-                            <View
-                                style={{
-                                    flexDirection: "column",
-                                    marginBottom: 12,
-                                    borderWidth: 1,
-                                    padding: 15,
-                                    borderRadius: 8,
-                                    borderColor: "#3498db",
-                                    backgroundColor: "#ecf0f1",
-                                    shadowColor: "#000",
-                                    shadowOffset: { width: 0, height: 2 },
-                                    shadowOpacity: 0.1,
-                                    shadowRadius: 4,
-                                    elevation: 3,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        marginBottom: 12,
-                                        width: "100%",
-                                    }}
-                                >
-                                    <Text style={{ fontWeight: "600", fontSize: 16, color: "#2c3e50" }}>
-                                        {item.productName}
-                                    </Text>
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <TextInput
-                                            style={{
-                                                width: 150,
-                                                height: 40,
-                                                borderWidth: 1,
-                                                paddingHorizontal: 10,
-                                                marginRight: 10,
-                                                borderColor: "#bdc3c7",
-                                                color: "#2c3e50",
-                                                borderRadius: 6,
-                                                backgroundColor: "#fff",
-                                                fontSize: 14,
-                                            }}
-                                            onChangeText={(value) => updateQuantityProductCheck(item.productId, parseInt(value))}
-                                            value={item.quantity.toString()}
-                                            placeholder="Số lượng nhập ..."
-                                            placeholderTextColor="#95a5a6"
-                                            keyboardType="numeric"
-                                        />
-                                        <TouchableOpacity
-                                            style={{
-                                                backgroundColor: "#f1c40f",
-                                                borderRadius: 50,
-                                                padding: 8,
-                                            }}
-                                            onPress={() => deleteProductCheck(item.productId)}
-                                        >
-                                            <AntDesign name="delete" size={20} color="white" />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
 
-                                <Picker
-                                    selectedValue={item.currentUnit}
-                                    style={{
-                                        height: 60,
-                                        width: "100%",
-                                        backgroundColor: "#bdc3c7",
-                                        borderWidth: 1,
-                                        borderColor: "#bdc3c7",
-                                        borderRadius: 6,
-                                        fontSize: 14,
-                                        color: "#2c3e50",
-                                    }}
-                                    onValueChange={(itemValue) => updateCurrentUnitProductCheck(item.productId, itemValue)}
-                                >
-                                    <Picker.Item label="Đơn vị tính..." value="" />
-                                    {item.units.map((unit) => (
-                                        <Picker.Item key={unit.unitId} label={unit.unitName} value={unit.unitId} />
-                                    ))}
-                                </Picker>
+            {productChecks.length === 0 ? (
+                <Text style={styles.noProductText}>Chưa có sản phẩm nào được chọn....</Text>
+            ) : (
+                <FlatList
+                    data={productChecks}
+                    renderItem={({ item }) => (
+                        <View style={styles.productItem}>
+                            <View style={styles.productRow}>
+                                <Text style={styles.productName}>{item.productName}</Text>
+                                <View style={styles.productActions}>
+                                    <TextInput
+                                        style={styles.quantityInput}
+                                        onChangeText={(value) =>
+                                            updateQuantityProductCheck(item.productId, parseInt(value))
+                                        }
+                                        value={item.quantity.toString()}
+                                        placeholder="Số lượng nhập ..."
+                                        placeholderTextColor="#95a5a6"
+                                        keyboardType="numeric"
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.deleteButton}
+                                        onPress={() => deleteProductCheck(item.productId)}
+                                    >
+                                        <AntDesign name="delete" size={20} color="white" />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        )}
-                        keyExtractor={item => item.productId}
-                    />
-            }
+                            <Picker
+                                selectedValue={item.currentUnit}
+                                style={styles.unitPicker}
+                                onValueChange={(itemValue) =>
+                                    updateCurrentUnitProductCheck(item.productId, itemValue)
+                                }
+                            >
+                                <Picker.Item label="Đơn vị tính..." value="" />
+                                {item.units.map((unit) => (
+                                    <Picker.Item key={unit.unitId} label={unit.unitName} value={unit.unitId} />
+                                ))}
+                            </Picker>
+                        </View>
+                    )}
+                    keyExtractor={(item) => item.productId}
+                />
+            )}
+
             <ModalListProductSupplier
                 isModalVisible={isModalVisible}
                 setModalVisible={setModalVisible}
@@ -422,33 +314,131 @@ const CreateStockEntry = () => {
                 setSupplier={addNewSupplier}
             />
         </View>
-    )
+    );
+
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'flex-start',
-        padding: 10,
-        backgroundColor: '#ecf0f1',
+        padding: 20,
+        backgroundColor: "#f9f9f9",
     },
-    containergroup: {
+    headerSection: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 20,
+    },
+    infoText: {
+        fontSize: 14,
+        color: "#333",
         marginBottom: 10,
     },
-    fontweight: {
-        fontWeight: "bold"
+    boldText: {
+        fontWeight: "bold",
     },
-    input: {
+    supplierSection: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: "bold",
+        marginRight: 10,
+    },
+    supplierInfo: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    selectSupplierText: {
+        color: "#2980b9",
+        fontWeight: "bold",
+    },
+    submitButtonText: {
+        color: "#3498db",
+        fontWeight: "bold",
+        fontSize: 16,
+    },
+    noteInput: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: "#fff",
+        fontSize: 14,
+    },
+    productListHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginVertical: 10,
+    },
+    productListTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#3498db",
+    },
+    addButton: {
+        backgroundColor: "#3498db",
+        borderRadius: 20,
+        paddingVertical: 8,
+        paddingHorizontal: 20,
+    },
+    addButtonText: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "600",
+    },
+    noProductText: {
+        color: "#e74c3c",
+        fontWeight: "600",
+    },
+    productItem: {
+        marginBottom: 12,
+        borderWidth: 1,
+        padding: 15,
+        borderRadius: 8,
+        borderColor: "#3498db",
+        backgroundColor: "#ecf0f1",
+        elevation: 3,
+    },
+    productRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+    productName: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#2c3e50",
+    },
+    productActions: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    quantityInput: {
+        width: 150,
         height: 40,
         borderWidth: 1,
-        padding: 10,
-        width: '100%',
-        marginBottom: 10,
-        borderColor: "gray",
-        color: "gray",
-        borderRadius: 5,
-    }
+        paddingHorizontal: 10,
+        borderRadius: 6,
+        marginRight: 10,
+        backgroundColor: "#fff",
+    },
+    deleteButton: {
+        backgroundColor: "#f1c40f",
+        borderRadius: 50,
+        padding: 8,
+    },
+    unitPicker: {
+        height: 60,
+        backgroundColor: "#bdc3c7",
+        borderRadius: 6,
+    },
 });
+
 
 export default CreateStockEntry;
 

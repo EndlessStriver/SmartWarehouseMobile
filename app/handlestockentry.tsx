@@ -102,159 +102,104 @@ const HandleStockEntry = () => {
 
     return (
         <View style={styles.container}>
-            {
-                loading ?
-                    <Text>Đang tải dữ liệu...</Text>
-                    :
-                    <View style={{ flex: 1, width: "100%" }}>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <View>
-                                <Text style={styles.containergroup}>
-                                    <Text style={styles.fontweight}>Mã phiếu nhập: </Text>
-                                    {receiveOrder?.receiveCode}
-                                </Text>
-                                <Text style={styles.containergroup}>
-                                    <Text style={styles.fontweight}>Ngày tạo: </Text>
-                                    {FormatDate(receiveOrder?.create_at.toString() || "")}
-                                </Text>
-                                <Text style={styles.containergroup}>
-                                    <Text style={styles.fontweight}>Người tạo: </Text>
-                                    {receiveOrder?.receiveBy || ""}
-                                </Text>
-                                <Text style={styles.containergroup}>
-                                    <Text style={styles.fontweight}>Nhà cung cấp: </Text>
-                                    {receiveOrder?.supplier.name}
-                                </Text>
-                            </View>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    gap: 10,
-                                }}
-                            >
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        router.push({
-                                            pathname: "/createstockentry",
-                                            params: {
-                                                receiveId: receiveOrder?.id
-                                            }
-                                        })
-                                    }}
-                                >
-                                    <Text style={{ color: "red", fontWeight: "bold" }}>Chỉnh sửa</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    disabled={productIsCheck.length === 0}
-                                    onPress={handleSubmit}
-                                    style={{
-                                        opacity: productIsCheck.length === 0 ? 0.5 : 1,
-                                    }}
-                                >
-                                    <Text style={{ color: "#3498db", fontWeight: "bold" }}>Xác nhận</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'flex-end',
-                                marginBottom: 10
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    fontSize: 16,
-                                    fontWeight: 'bold',
-                                    color: "#3498db"
-                                }}
-                            >
-                                Danh sách sản phẩm đã kiểm tra
+            {loading ? (
+                <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
+            ) : (
+                <View style={styles.contentContainer}>
+                    {/* Header thông tin */}
+                    <View style={styles.headerContainer}>
+                        <View>
+                            <Text style={styles.infoText}>
+                                <Text style={styles.boldText}>Mã phiếu nhập: </Text>
+                                {receiveOrder?.receiveCode}
                             </Text>
+                            <Text style={styles.infoText}>
+                                <Text style={styles.boldText}>Ngày tạo: </Text>
+                                {FormatDate(receiveOrder?.create_at?.toString() || "")}
+                            </Text>
+                            <Text style={styles.infoText}>
+                                <Text style={styles.boldText}>Người tạo: </Text>
+                                {receiveOrder?.receiveBy || ""}
+                            </Text>
+                            <Text style={styles.infoText}>
+                                <Text style={styles.boldText}>Nhà cung cấp: </Text>
+                                {receiveOrder?.supplier?.name || ""}
+                            </Text>
+                        </View>
+                        <View style={styles.actionsContainer}>
                             <TouchableOpacity
-                                onPress={() => setModalVisible(true)}
-                                style={{
-                                    padding: 4,
-                                    borderRadius: 5,
-                                    backgroundColor: "#2ecc71",
+                                onPress={() => {
+                                    router.push({
+                                        pathname: "/createstockentry",
+                                        params: { receiveId: receiveOrder?.id },
+                                    });
                                 }}
                             >
-                                <Text style={{ color: "white", fontWeight: "bold" }}>Thêm +</Text>
+                                <Text style={styles.editButton}>Chỉnh sửa</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                disabled={productIsCheck.length === 0}
+                                onPress={handleSubmit}
+                                style={{
+                                    opacity: productIsCheck.length === 0 ? 0.5 : 1,
+                                }}
+                            >
+                                <Text style={styles.confirmText}>Xác nhận</Text>
                             </TouchableOpacity>
                         </View>
-                        {
-                            productIsCheck.length === 0 ?
-                                <Text
-                                    style={{
-                                        textAlign: "center",
-                                        color: "#e74c3c",
-                                        fontSize: 14,
-                                        marginTop: 10,
-                                        fontWeight: "600"
-                                    }}
-                                >Chưa có sản phẩm nào được kiểm tra...</Text>
-                                :
-                                <FlatList
-                                    style={{ width: "100%", marginTop: 10 }}
-                                    data={productIsCheck}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={({ item }) => (
-                                        <View
-                                            style={{
-                                                flexDirection: "row",
-                                                justifyContent: "space-between",
-                                                backgroundColor: "lightblue",
-                                                padding: 15,
-                                                marginBottom: 10,
-                                                borderRadius: 5,
-                                                width: "100%"
-                                            }}
-                                        >
-                                            <View>
-                                                <Text>
-                                                    <Text style={{ fontWeight: "bold" }}>Mã sản phẩm: </Text>
-                                                    {item.productName}
-                                                </Text>
-                                                <Text>
-                                                    <Text style={{ fontWeight: "bold" }}>Số lượng kiểm tra: </Text>
-                                                    {item.quantityCheck}
-                                                </Text>
-                                                <Text>
-                                                    <Text style={{ fontWeight: "bold" }}>Tình trạng sản phẩm: </Text>
-                                                    {item.statusProduct === "NORMAL" ? "Bình thường" : "Hư hại"}
-                                                </Text>
-                                                <Text>
-                                                    <Text style={{ fontWeight: "bold" }}>Vị trí chứa: </Text>
-                                                    {item.location.lable}
-                                                </Text>
-                                            </View>
-                                            <View>
-                                                <TouchableOpacity
-                                                    onPress={() => removeProductIsCheck(productIsCheck.findIndex((i) => i === item))}
-                                                    style={{
-                                                        padding: 10,
-                                                        backgroundColor: "#e74c3c",
-                                                        borderRadius: 5,
-                                                        marginTop: 10,
-                                                        alignItems: "center"
-                                                    }}
-                                                >
-                                                    <Text style={{ color: "white", fontWeight: "bold" }}>Xóa</Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                    )}
-                                />
-                        }
                     </View>
-            }
+
+                    <View style={styles.productHeader}>
+                        <Text style={styles.productHeaderText}>
+                            Danh sách sản phẩm đã kiểm tra
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => setModalVisible(true)}
+                            style={styles.addButton}
+                        >
+                            <Text style={styles.addButtonText}>Thêm +</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {productIsCheck.length === 0 ? (
+                        <Text style={styles.noProductText}>
+                            Chưa có sản phẩm nào được kiểm tra...
+                        </Text>
+                    ) : (
+                        <FlatList
+                            data={productIsCheck}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => (
+                                <View style={styles.productItem}>
+                                    <View>
+                                        <Text>
+                                            <Text style={styles.boldText}>Mã sản phẩm: </Text>
+                                            {item.productName}
+                                        </Text>
+                                        <Text>
+                                            <Text style={styles.boldText}>Số lượng kiểm tra: </Text>
+                                            {item.quantityCheck}
+                                        </Text>
+                                        <Text>
+                                            <Text style={styles.boldText}>Tình trạng sản phẩm: </Text>
+                                            {item.statusProduct === "NORMAL" ? "Bình thường" : "Hư hại"}
+                                        </Text>
+                                        <Text>
+                                            <Text style={styles.boldText}>Vị trí chứa: </Text>
+                                            {item.location?.lable || ""}
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        onPress={() => removeProductIsCheck(productIsCheck.findIndex(i => i === item))}
+                                    >
+                                        <Text style={styles.deleteButtonText}>Xóa</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        />
+                    )}
+                </View>
+            )}
             <ModalAddProductCheck
                 isModalVisible={isModalVisible}
                 setModalVisible={setModalVisible}
@@ -270,16 +215,79 @@ const HandleStockEntry = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
-        justifyContent: 'center',
+        padding: 15,
+        backgroundColor: '#f9f9f9',
+    },
+    loadingText: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#7f8c8d',
+    },
+    contentContainer: {
+        flex: 1,
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
+    infoText: {
+        fontSize: 14,
+        marginBottom: 5,
+    },
+    boldText: {
+        fontWeight: 'bold',
+    },
+    actionsContainer: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    editButton: {
+        color: '#e74c3c',
+        fontWeight: 'bold',
+    },
+    confirmText: {
+        color: '#3498db',
+        fontWeight: 'bold',
+    },
+    productHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        marginBottom: 10,
     },
-    containergroup: {
-        marginBottom: 10
+    productHeaderText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#3498db',
     },
-    fontweight: {
-        fontWeight: 'bold'
-    }
+    addButton: {
+        padding: 5,
+        backgroundColor: '#2ecc71',
+        borderRadius: 5,
+    },
+    addButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    noProductText: {
+        textAlign: 'center',
+        color: '#e74c3c',
+        fontSize: 14,
+        marginTop: 10,
+    },
+    productItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 15,
+        backgroundColor: '#ecf0f1',
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    deleteButtonText: {
+        color: '#e74c3c',
+        fontWeight: 'bold',
+    },
 });
 
 export default HandleStockEntry
