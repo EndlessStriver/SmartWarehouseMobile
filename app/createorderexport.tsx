@@ -164,7 +164,7 @@ const CreateOrderExport = () => {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={[styles.productCard, { backgroundColor: item.itemStatus ? "#2ecc71" : "#e74c3c" }]}>
-                            <View style={styles.productInfo}>
+                            <View>
                                 <Text style={styles.productText}>
                                     <Text style={styles.boldText}>Tên sản phẩm: </Text>{item.productName}
                                 </Text>
@@ -276,11 +276,10 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
-    },
-    productInfo: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        paddingBottom: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: '#ccc',
     },
     productText: {
         fontSize: 14,
