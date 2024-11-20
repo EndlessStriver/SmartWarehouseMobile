@@ -29,6 +29,10 @@ const CreateInventory: React.FC = () => {
     const [loading, setLoading] = useState(false);
 
     const handleAddShelf = (data: ShelfInventory) => {
+        if (shelfList.find((shelf) => shelf.title.label === data.title.label)) {
+            Alert.alert("Thông báo", "Kệ đã tồn tại...");
+            return;
+        }
         setShelfList([...shelfList, data]);
     }
 
