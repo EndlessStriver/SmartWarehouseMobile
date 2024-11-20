@@ -45,7 +45,7 @@ const Home = () => {
             <TouchableOpacity
                 style={styles.buttonfnc}
                 onPress={() => {
-                    router.push('/warehouse');
+                    router.push('/inventory');
                 }}
             >
                 <FontAwesome name="clipboard" size={30} color="#3498db" />

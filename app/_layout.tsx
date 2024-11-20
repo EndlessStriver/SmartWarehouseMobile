@@ -100,6 +100,20 @@ export default function RootLayout() {
           title: "Tạo Phiếu Xuất Kho",
         }}
       />
+      <Stack.Screen
+        name="inventory"
+        options={{
+          headerShown: true,
+          title: "Kiểm Kê",
+        }}
+      />
+      <Stack.Screen
+        name="createinventory"
+        options={{
+          headerShown: true,
+          title: "Tạo Phiếu Kiểm Kê",
+        }}
+      />
     </Stack>
   );
 }

@@ -58,6 +58,8 @@ const StockEntryDetail = () => {
                             color: "#3498db"
                         }}>Danh sách kiểm tra:</Text>
                         <FlatList
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
                             data={receiveCheck.checkItems}
                             renderItem={({ item }) => (
                                 <View style={styles.receiveCheck}>
