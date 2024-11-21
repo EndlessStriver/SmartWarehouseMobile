@@ -18,6 +18,7 @@ export interface Product {
     description: string;
     productCode: string;
     img: string;
+    export_criteria: string;
     category: Category;
     productDetails: ProductDetail[];
     units: Unit[];

@@ -219,6 +219,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#fff',
     },
     infoText: {
         fontSize: 14,

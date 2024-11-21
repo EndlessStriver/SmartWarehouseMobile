@@ -5,6 +5,7 @@ import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } fro
 import GetLocationFIFO from "@/service/GetLocationFIFO";
 import { FontAwesome } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import Checkbox from "expo-checkbox";
 
 interface ModalAddExportItemProps {
     modalVisiable: boolean;
@@ -20,10 +21,12 @@ const ModalAddExportItem: React.FC<ModalAddExportItemProps> = (props) => {
     const [unit, setUnit] = useState("");
     const [typeExport, setTypeExport] = useState("FIFO");
     const [quantityExport, setQuantityExport] = useState("");
+    const [disabledTypeExport, setDisabledTypeExport] = useState(false);
 
     useEffect(() => {
         if (props.selectedProduct) {
             setUnit(props.selectedProduct?.units.find((unit) => unit.isBaseUnit)?.id || "");
+            setTypeExport(props.selectedProduct.export_criteria);
         }
     }, [props.selectedProduct])
 
@@ -144,8 +147,33 @@ const ModalAddExportItem: React.FC<ModalAddExportItemProps> = (props) => {
                     onChangeText={updateQuantityExport}
                     keyboardType="numeric"
                 />
-                <Text style={styles.boldText}>Kiểu xuất kho:</Text>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 10,
+                        borderWidth: 1,
+                        borderColor: '#fff',
+                    }}
+                >
+                    <Text style={styles.boldText}>Kiểu xuất kho:</Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 10,
+                        }}
+                    >
+                        <Checkbox
+                            value={disabledTypeExport}
+                            onValueChange={setDisabledTypeExport}
+                        />
+                        <Text>Tùy chỉnh</Text>
+                    </View>
+                </View>
                 <Picker
+                    enabled={disabledTypeExport}
                     style={styles.picker}
                     selectedValue={typeExport}
                     onValueChange={(itemValue) => setTypeExport(itemValue)}
