@@ -1,122 +1,122 @@
-import { LocationData } from "@/service/GetLocationInformationById";
 import { Image, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { LocationData } from "@/service/GetLocationInformationById";
 
 interface LocationInformationDetailProps {
     location: LocationData;
 }
 
-const LocationInformationDetail: React.FC<LocationInformationDetailProps> = (props) => {
+const LocationInformationDetail: React.FC<LocationInformationDetailProps> = ({ location }) => {
     return (
         <>
-            <Text style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                marginBottom: 10,
-                color: "#0984e3"
-            }}>Thông tin vị trí</Text>
-            <View style={styles.containerlable}>
-                <Text style={styles.lable}>Tên vị trí: </Text>
-                <Text>{props.location?.locationCode}</Text>
+            <Text style={styles.sectionTitle}>Thông tin vị trí</Text>
+            <View style={styles.card}>
+                <InfoRow label="Tên vị trí:" value={location?.locationCode} />
+                <InfoRow
+                    label="Trạng thái:"
+                    value={location?.occupied ? "Đã chứa sản phẩm" : "Chưa chứa sản phẩm"}
+                    valueStyle={location?.occupied ? styles.statusOccupied : styles.statusAvailable}
+                />
+                <InfoRow label="Thể tích tối đa:" value={`${Number(location?.maxCapacity).toLocaleString()} cm3`} />
+                <InfoRow label="Thể tích chiếm dụng:" value={`${Number(location?.currentCapacity).toLocaleString()} cm3`} />
+                <InfoRow label="Sức chứa tối đa:" value={`${Number(location?.maxWeight).toLocaleString()} kg`} />
+                <InfoRow label="Khối lượng hiện tại:" value={`${Number(location?.currentWeight).toLocaleString()} kg`} />
             </View>
-            <View style={styles.containerlable}>
-                <Text style={styles.lable}>Trạng thái: </Text>
-                {
-                    props.location?.occupied ?
-                        <Text style={{ color: 'red', fontWeight: "bold" }}>Đã chứa sản phẩm</Text> :
-                        <Text style={{ color: 'green', fontWeight: "bold" }}>Chưa chứa sản phẩm</Text>
-                }
-            </View>
-            <View style={styles.containerlable}>
-                <Text style={styles.lable}>Thể tích tối đa: </Text>
-                <Text>{Number(props.location?.maxCapacity).toLocaleString()} cm3</Text>
-            </View>
-            <View style={styles.containerlable}>
-                <Text style={styles.lable}>Thể tích chiếm dụng: </Text>
-                <Text>{Number(props.location?.currentCapacity).toLocaleString()} cm3</Text>
-            </View>
-            <View style={styles.containerlable}>
-                <Text style={styles.lable}>Sức chứa tối đa: </Text>
-                <Text>{Number(props.location?.maxWeight).toLocaleString()} kg</Text>
-            </View>
-            <View style={styles.containerlable}>
-                <Text style={styles.lable}>Khối lượng hiện tại: </Text>
-                <Text>{Number(props.location?.currentWeight).toLocaleString()} kg</Text>
-            </View>
-            <Text style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                marginTop: 10,
-                color: "#0984e3"
-            }}>Thông tin sản phẩm</Text>
-            {
-                props.location.occupied ?
-                    <View style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        marginTop: 10
-                    }}>
-                        <View>
-                            <Image
-                                style={styles.imageproduct}
-                                source={{
-                                    uri: props.location.skus.productDetails.product.img
-                                }}
-                            />
-                        </View>
-                        <View>
-                            <View style={styles.containerlable}>
-                                <Text style={styles.lable}>Mã SKU: </Text>
-                                <Text>{props.location.skus.skuCode}</Text>
-                            </View>
-                            <View style={styles.containerlable}>
-                                <Text style={styles.lable}>Mã sản phẩm: </Text>
-                                <Text>{props.location.skus.productDetails.product.productCode}</Text>
-                            </View>
-                            <View style={styles.containerlable}>
-                                <Text style={styles.lable}>Tên sản phẩm: </Text>
-                                <Text>{props.location.skus.productDetails.product.name}</Text>
-                            </View>
-                            <View style={styles.containerlable}>
-                                <Text style={styles.lable}>Số lượng: </Text>
-                                <Text>{props.location.quantity} {props.location.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name}</Text>
-                            </View>
-                            <View style={styles.containerlable}>
-                                <Text style={styles.lable}>Trọng lượng: </Text>
-                                <Text>{props.location.skus.weight} kg</Text>
-                            </View>
-                            <View style={styles.containerlable}>
-                                <Text style={styles.lable}>Kích thước: </Text>
-                                <Text>{props.location.skus.dimension} cm</Text>
-                            </View>
-                        </View>
+
+            <Text style={styles.sectionTitle}>Thông tin sản phẩm</Text>
+            {location?.occupied ? (
+                <View style={[styles.card, styles.productCard]}>
+                    <Image style={styles.image} source={{ uri: location.skus.productDetails.product.img }} />
+                    <View style={styles.productDetails}>
+                        <InfoRow label="Mã SKU:" value={location.skus.skuCode} />
+                        <InfoRow label="Mã sản phẩm:" value={location.skus.productDetails.product.productCode} />
+                        <InfoRow label="Tên sản phẩm:" value={location.skus.productDetails.product.name} />
+                        <InfoRow
+                            label="Số lượng:"
+                            value={`${location.quantity} ${location.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name
+                                }`}
+                        />
+                        <InfoRow label="Trọng lượng:" value={`${location.skus.weight} kg`} />
+                        <InfoRow label="Kích thước:" value={`${location.skus.dimension} cm`} />
                     </View>
-                    :
-                    <Text style={{ marginBottom: 10 }}>Vị trí chưa chứa sản phẩm nào</Text>
-            }
+                </View>
+            ) : (
+                <Text style={styles.noProduct}>Vị trí chưa chứa sản phẩm nào</Text>
+            )}
         </>
     );
-}
+};
+
+const InfoRow = ({ label, value, valueStyle }: { label: string; value: string; valueStyle?: any }) => (
+    <View style={styles.row}>
+        <Text style={styles.label}>{label}</Text>
+        <Text style={[styles.value, valueStyle]}>{value}</Text>
+    </View>
+);
 
 export default LocationInformationDetail;
 
 const styles = StyleSheet.create({
-    containerlable: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: "#f7f8fa",
     },
-    lable: {
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#0984e3",
+        marginBottom: 15,
+    },
+    card: {
+        backgroundColor: "#ffffff",
+        padding: 15,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+        marginBottom: 20,
+        width: "100%",
+    },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    },
+    label: {
         fontSize: 14,
-        fontWeight: 'bold',
+        fontWeight: "600",
+        color: "#333",
     },
-    lable1: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: "#0984e3"
+    value: {
+        fontSize: 14,
+        color: "#555",
     },
-    imageproduct: {
-        width: 140,
-        height: 140,
-    }
+    statusOccupied: {
+        color: "red",
+        fontWeight: "bold",
+    },
+    statusAvailable: {
+        color: "green",
+        fontWeight: "bold",
+    },
+    productCard: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    image: {
+        width: 80,
+        height: 80,
+        borderRadius: 8,
+        marginRight: 15,
+    },
+    productDetails: {
+        flex: 1,
+    },
+    noProduct: {
+        fontSize: 14,
+        color: "#999",
+    },
 });

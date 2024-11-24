@@ -83,12 +83,12 @@ export default function BarcodeScanner() {
                         <LocationInformationDetail location={location} />
                     </View>
                 }
-                {scanned && (
+                {scanned && data && (
                     <Button title="Quét lại" onPress={() => {
+                        setScanned(false);
+                        setData(null);
                         setProduct(null);
                         setLocation(null);
-                        setData(null);
-                        setScanned(false);
                     }} />
                 )}
             </CameraView>
