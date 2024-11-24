@@ -69,7 +69,7 @@ export default function BarcodeScanner() {
         <View style={styles.container}>
             <CameraView
                 onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-                style={StyleSheet.absoluteFillObject}
+                style={{ flex: 1, width: '100%' }}
             >
                 {
                     data && product &&
@@ -98,9 +98,7 @@ export default function BarcodeScanner() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1
     },
     overlay: {
         flex: 1,

@@ -1,5 +1,5 @@
 import { Product } from "@/service/GetProductInformationById";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 interface ProductListLocationDetailProps {
     product: Product;
@@ -33,7 +33,7 @@ const ProductListLocationDetail: React.FC<ProductListLocationDetailProps> = ({ p
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
                     style={styles.locationList}
-                    data={product?.productDetails[0].sku[0].locations}
+                    data={product?.productDetails[0].sku[0].locations.filter((location) => location.quantity > 0)}
                     renderItem={({ item }) => (
                         <View style={styles.locationCard}>
                             <View style={styles.locationItem}>
