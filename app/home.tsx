@@ -4,7 +4,7 @@ import { router, useNavigation } from "expo-router";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
 import { useEffect, useLayoutEffect, useState } from "react";
-import logout from "@/service/logout";
+import logout from "@/service/Logout";
 
 const Home = () => {
 
@@ -122,7 +122,7 @@ const Home = () => {
                 </TouchableOpacity>
             }
             {
-                checkHasPermission(["admin", "warehouse_manager"]) &&
+                checkHasPermission(["admin", "warehouse_manager", "inventory_specialist"]) &&
                 <TouchableOpacity
                     style={styles.buttonfnc}
                     onPress={() => {
