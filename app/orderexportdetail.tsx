@@ -180,9 +180,14 @@ const OrderExportDetail = () => {
                     <View
                         style={{
                             marginBottom: 10,
-                            padding: 10,
-                            borderRadius: 5,
-                            backgroundColor: item.itemStatus ? "#2ecc71" : "#e74c3c",
+                            padding: 15,
+                            borderRadius: 10,
+                            backgroundColor: "#ffffff",
+                            shadowColor: "#000",
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 5,
+                            elevation: 4,
                         }}
                     >
                         <Text>
@@ -202,6 +207,7 @@ const OrderExportDetail = () => {
                             {item.locationExport.map((location) => location.locationCode).join(", ")}
                         </Text>
                     </View>
+
                 )}
             />
         </View>
