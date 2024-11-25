@@ -170,6 +170,8 @@ const OrderExportDetail = () => {
                 }}
             >Danh sách sản phẩm xuất kho</Text>
             <FlatList
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 style={{
                     width: '100%',
                     marginTop: 10,

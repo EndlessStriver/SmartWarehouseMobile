@@ -19,6 +19,10 @@ const ProductListLocationDetail: React.FC<ProductListLocationDetailProps> = ({ p
                         label="Số lượng tồn kho"
                         value={`${product?.productDetails[0].quantity} ${product?.units.find((unit) => unit.isBaseUnit)?.name}`}
                     />
+                    <ProductDetail
+                        label="Số lượng lỗi tồn kho"
+                        value={`${product?.productDetails[0].damagedQuantity} ${product?.units.find((unit) => unit.isBaseUnit)?.name}`}
+                    />
                     <ProductDetail label="Mã SKU" value={product?.productDetails[0].sku[0].skuCode} />
                     <ProductDetail label="Trọng lượng" value={`${product?.productDetails[0].sku[0].weight} kg`} />
                     <ProductDetail label="Kích thước" value={`${product?.productDetails[0].sku[0].dimension} cm`} />
@@ -43,6 +47,10 @@ const ProductListLocationDetail: React.FC<ProductListLocationDetailProps> = ({ p
                             <View style={styles.locationItem}>
                                 <Text style={styles.locationLabel}>Số lượng: </Text>
                                 <Text style={styles.locationText}>{item.quantity} {product?.units.find((unit) => unit.isBaseUnit)?.name}</Text>
+                            </View>
+                            <View style={styles.locationItem}>
+                                <Text style={styles.locationLabel}>Tình trạng: </Text>
+                                <Text style={styles.locationText}>{item.shelf.typeShelf === "NORMAL" ? "Bình thường" : "Bị lỗi"}</Text>
                             </View>
                         </View>
                     )}
@@ -95,17 +103,24 @@ const styles = StyleSheet.create({
     },
     detailRow: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         marginBottom: 8,
+        flexWrap: 'wrap',
     },
     detailLabel: {
         fontSize: 14,
         fontWeight: 'bold',
         color: '#555',
+        flexShrink: 1,
     },
     detailValue: {
         fontSize: 14,
         color: '#333',
+        flex: 1,
+        flexShrink: 1,
+        overflow: 'hidden',
+        maxWidth: '90%',
+        paddingRight: 10,
     },
     locationTitle: {
         fontSize: 16,
@@ -146,3 +161,5 @@ const styles = StyleSheet.create({
         color: '#333',
     },
 });
+
+
