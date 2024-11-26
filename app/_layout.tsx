@@ -23,25 +23,9 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="home"
+        name="tabs"
         options={{
-          headerShown: true,
-          headerBackVisible: true,
-          title: "Trang Chủ",
-        }}
-      />
-      <Stack.Screen
-        name="barcodescanner"
-        options={{
-          headerShown: true,
-          title: "Quét Mã Vạch",
-        }}
-      />
-      <Stack.Screen
-        name="stockentry"
-        options={{
-          headerShown: true,
-          title: "Nhập Kho",
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -49,13 +33,6 @@ export default function RootLayout() {
         options={{
           headerShown: true,
           title: "Chi Tiết Phiếu Nhập Kho",
-        }}
-      />
-      <Stack.Screen
-        name="warehouse"
-        options={{
-          headerShown: true,
-          title: "Tồn Kho",
         }}
       />
       <Stack.Screen
@@ -80,13 +57,6 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="orderexport"
-        options={{
-          headerShown: true,
-          title: "Xuất Kho",
-        }}
-      />
-      <Stack.Screen
         name="orderexportdetail"
         options={{
           headerShown: true,
@@ -98,13 +68,6 @@ export default function RootLayout() {
         options={{
           headerShown: true,
           title: "Tạo Phiếu Xuất Kho",
-        }}
-      />
-      <Stack.Screen
-        name="inventory"
-        options={{
-          headerShown: true,
-          title: "Kiểm Kê",
         }}
       />
       <Stack.Screen

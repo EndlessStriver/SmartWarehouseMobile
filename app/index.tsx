@@ -24,7 +24,7 @@ export default function Index() {
     if (validateForm()) {
       LoginService(username, password)
         .then(() => {
-          router.replace('/home');
+          router.replace('/tabs/stockentry');
         })
         .catch((error) => {
           console.log(error);

@@ -1,23 +1,12 @@
 import GetInventories, { Transaction } from "@/service/GetInventories";
 import FormatDate from "@/unit/FormatDate";
-import { router, useNavigation } from "expo-router";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const Inventory: React.FC = () => {
-    const navigation = useNavigation();
     const [inventories, setInventories] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <TouchableOpacity onPress={() => router.push("/createinventory")}>
-                    <Text style={styles.headerButtonText}>Tạo phiếu +</Text>
-                </TouchableOpacity>
-            ),
-        });
-    }, []);
 
     useEffect(() => {
         setLoading(true);
@@ -29,7 +18,6 @@ const Inventory: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Lịch Sử Kiểm Kê</Text>
             {loading ? (
                 <ActivityIndicator size="large" color="#3498db" />
             ) : (

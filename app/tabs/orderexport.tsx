@@ -1,39 +1,15 @@
 import GetOrderExports, { ExportOrder } from "@/service/GetOrderExports";
-import { router, useNavigation } from "expo-router";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const OrderExport: React.FC = () => {
-    const navigation = useNavigation();
     const [orderExports, setOrderExports] = useState<ExportOrder[]>([]);
-    const [pagination, setPagination] = useState({
-        limit: 10,
-        offset: 1,
-        totalPage: 0,
-    });
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <TouchableOpacity
-                    onPress={() => router.push("/createorderexport")}
-                    style={styles.headerButton}
-                >
-                    <Text style={styles.headerButtonText}>Tạo Phiếu +</Text>
-                </TouchableOpacity>
-            ),
-        });
-    }, [navigation]);
 
     useEffect(() => {
         GetOrderExports()
             .then((res) => {
                 setOrderExports(res.data);
-                setPagination({
-                    limit: res.limit,
-                    offset: res.offset,
-                    totalPage: res.totalPage,
-                });
             })
             .catch((err) => {
                 console.log(err);
@@ -43,7 +19,6 @@ const OrderExport: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Danh Sách Phiếu Xuất Kho</Text>
             <FlatList
                 data={orderExports}
                 keyExtractor={(item) => item.id}

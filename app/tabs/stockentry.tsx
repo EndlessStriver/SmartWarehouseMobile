@@ -1,7 +1,7 @@
 import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import FormatDate from "@/unit/FormatDate";
-import { router, useNavigation } from "expo-router";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const StockEntry: React.FC = () => {
@@ -10,22 +10,6 @@ const StockEntry: React.FC = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-
-    const navigation = useNavigation();
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <TouchableOpacity
-                    onPress={() => {
-                        router.push({ pathname: '/createstockentry' })
-                    }}
-                >
-                    <Text style={{ color: "#fff", fontWeight: "600" }}>Tạo Phiếu +</Text>
-                </TouchableOpacity>
-            ),
-        })
-    }, [navigation])
 
     useEffect(() => {
         setLoading(true);
@@ -58,12 +42,6 @@ const StockEntry: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                marginBottom: 10,
-                color: "#34495e"
-            }}>Danh Sách Phiếu Nhập Kho</Text>
             <FlatList
                 style={{
                     width: '100%'

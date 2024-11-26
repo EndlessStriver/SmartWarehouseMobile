@@ -47,7 +47,6 @@ const WareHouse = () => {
                     <Ionicons name="refresh" size={16} color={"white"} />
                 </TouchableOpacity>
             </View>
-            <Text style={styles.label}>Thông tin tồn kho</Text>
             <FlatList
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
