@@ -43,13 +43,6 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="createstockentry"
-        options={{
-          headerShown: true,
-          title: "Tạo Phiếu Nhập Kho",
-        }}
-      />
-      <Stack.Screen
         name="handlestockentry"
         options={{
           headerShown: true,
@@ -61,13 +54,6 @@ export default function RootLayout() {
         options={{
           headerShown: true,
           title: "Chi Tiết Phiếu Xuất Kho",
-        }}
-      />
-      <Stack.Screen
-        name="createorderexport"
-        options={{
-          headerShown: true,
-          title: "Tạo Phiếu Xuất Kho",
         }}
       />
       <Stack.Screen

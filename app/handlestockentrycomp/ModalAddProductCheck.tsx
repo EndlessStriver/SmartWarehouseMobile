@@ -9,11 +9,10 @@ interface ModalAddProductCheckProps {
     isModalVisible: boolean;
     setModalVisible: (value: boolean) => void;
     receiveOrder?: GoodsReceipt;
-    addProductIsCheck: (product: ProductIsCheckType) => void;
+    addProductIsCheck: (products: ProductIsCheckType[]) => void;
     checkQuantityInbound: (receiveItemId: string) => number;
     productIsCheck: ProductIsCheckType[];
 }
-
 
 const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
 
@@ -24,7 +23,7 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
         <Modal
             visible={props.isModalVisible}
             onRequestClose={() => props.setModalVisible(false)}
-            animationType="fade"
+            animationType="slide"
         >
             <View style={styles.modalContainer}>
                 <View style={styles.header}>
@@ -40,7 +39,12 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
                         data={props.receiveOrder.receiveItems}
                         keyExtractor={(item) => item.id}
                         renderItem={({ item }) => (
-                            <View
+                            <TouchableOpacity
+                                disabled={props.checkQuantityInbound(item.id) === item.quantity}
+                                onPress={() => {
+                                    setReceiveItem(item);
+                                    setModalVisible(true);
+                                }}
                                 style={[
                                     styles.itemContainer,
                                     {
@@ -48,29 +52,12 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
                                     },
                                 ]}
                             >
-                                <Text>
-                                    <Text style={styles.bold}>Mã sản phẩm: </Text>
-                                    {item.product.productCode}
-                                </Text>
-                                <Text>
-                                    <Text style={styles.bold}>Tên sản phẩm: </Text>
-                                    {item.product.name}
-                                </Text>
-                                <Text>
-                                    <Text style={styles.bold}>Số lượng nhập: </Text>
-                                    {item.quantity} {item.product.units[0].name}
-                                </Text>
-                                <Text>
-                                    <Text style={styles.bold}>Số lượng đã kiểm tra: </Text>
-                                    {props.checkQuantityInbound(item.id)} {item.product.units[0].name}
-                                </Text>
+                                <Text style={styles.itemText}><Text style={styles.bold}>Mã sản phẩm: </Text>{item.product.productCode}</Text>
+                                <Text style={styles.itemText}><Text style={styles.bold}>Tên sản phẩm: </Text>{item.product.name}</Text>
+                                <Text style={styles.itemText}><Text style={styles.bold}>Số lượng nhập: </Text>{item.quantity} {item.product.units[0].name}</Text>
+                                <Text style={styles.itemText}><Text style={styles.bold}>Số lượng đã kiểm tra: </Text>{props.checkQuantityInbound(item.id)} {item.product.units[0].name}</Text>
 
-                                <TouchableOpacity
-                                    disabled={props.checkQuantityInbound(item.id) === item.quantity}
-                                    onPress={() => {
-                                        setReceiveItem(item);
-                                        setModalVisible(true);
-                                    }}
+                                <View
                                     style={styles.checkButton}
                                 >
                                     <Text
@@ -78,16 +65,16 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
                                             color:
                                                 props.checkQuantityInbound(item.id) === item.quantity
                                                     ? "#2ecc71"
-                                                    : "#3498db",
+                                                    : "#e67e22",
                                             fontWeight: "bold",
                                         }}
                                     >
                                         {props.checkQuantityInbound(item.id) === item.quantity
                                             ? "Đã kiểm tra"
-                                            : "Kiểm tra"}
+                                            : "Chờ Kiểm tra"}
                                     </Text>
-                                </TouchableOpacity>
-                            </View>
+                                </View>
+                            </TouchableOpacity>
                         )}
                     />
                 ) : (
@@ -104,7 +91,6 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
                 productIsCheck={props.productIsCheck}
             />
         </Modal>
-
     )
 }
 
@@ -112,17 +98,20 @@ const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#f4f5f7',
     },
     header: {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#3498db',
+        paddingBottom: 12,
         marginBottom: 16,
     },
     headerText: {
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#3498db',
     },
@@ -135,14 +124,22 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderRadius: 8,
         position: 'relative',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     },
     bold: {
         fontWeight: 'bold',
+    },
+    itemText: {
+        marginBottom: 8,
+        color: '#333',
     },
     checkButton: {
         position: 'absolute',
         top: 10,
         right: 10,
+        backgroundColor: '#fff',
+        padding: 6,
+        borderRadius: 4,
     },
     noInfoText: {
         textAlign: 'center',
@@ -152,6 +149,5 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
 });
-
 
 export default ModalAddProductCheck;

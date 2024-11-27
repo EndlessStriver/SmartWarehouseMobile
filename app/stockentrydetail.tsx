@@ -28,11 +28,10 @@ const StockEntryDetail = () => {
                 <View style={{ flex: 1, width: "100%" }}>
                     <View style={{ flex: 1 }}>
                         <Text style={{
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: '600',
-                            marginBottom: 10,
                             color: "#3498db"
-                        }}>Thông tin phiếu nhập kho</Text>
+                        }}>Thông Tin Phiếu Nhập</Text>
                         <Text>
                             <Text style={styles.fontweight} >Mã phiếu: </Text>
                             {receiveCheck.id}
@@ -50,13 +49,12 @@ const StockEntryDetail = () => {
                             {receiveCheck.totalReceiveQuantity}
                         </Text>
                     </View>
-                    <View style={{ flex: 4 }}>
+                    <View style={{ flex: 5 }}>
                         <Text style={{
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: '600',
-                            marginBottom: 10,
                             color: "#3498db"
-                        }}>Danh sách kiểm tra:</Text>
+                        }}>Danh Sách Kiểm Tra</Text>
                         <FlatList
                             showsHorizontalScrollIndicator={false}
                             showsVerticalScrollIndicator={false}

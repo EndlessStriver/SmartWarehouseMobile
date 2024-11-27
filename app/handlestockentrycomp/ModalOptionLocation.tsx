@@ -12,7 +12,7 @@ interface ModalOptionLocationProps {
     isModalVisible: boolean;
     setModalVisible: (value: boolean) => void;
     shelf: Shelf | null;
-    setLocationSelect: (data: LocationType) => void;
+    // setLocationSelect: (data: LocationType) => void;
     receiveItem?: ReceiveItem
     quantity: number
     productIsCheck: ProductIsCheckType[]
@@ -98,11 +98,11 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                         <TouchableOpacity
                             disabled={isDisabled(item) || isChoose(item)}
                             onPress={() => {
-                                props.setLocationSelect({
-                                    value: item.id,
-                                    lable: item.locationCode,
-                                    maxQuantityInbound: 0,
-                                });
+                                // props.setLocationSelect({
+                                //     value: item.id,
+                                //     lable: item.locationCode,
+                                //     maxQuantityInbound: 0,
+                                // });
                                 props.setModalVisible(false);
                             }}
                             style={[
@@ -146,66 +146,72 @@ const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#f5f5f5',
-        borderRadius: 10,
+        backgroundColor: '#ffffff',
     },
     headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        paddingBottom: 10,
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
-        color: '#3498db',
+        color: '#2c3e50',
     },
     columnWrapper: {
         justifyContent: 'space-between',
+        marginBottom: 10,
     },
     locationContainer: {
-        width: 160,
+        width: '48%',
         height: 140,
         padding: 15,
         marginBottom: 15,
-        borderRadius: 8,
+        borderRadius: 10,
         justifyContent: 'space-between',
-        position: 'relative',
+        backgroundColor: '#ecf0f1',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 5,
-        elevation: 5,
+        elevation: 3,
     },
     locationCode: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#34495e',
         marginBottom: 5,
     },
     productName: {
         fontSize: 14,
-        color: '#fff',
+        color: '#3498db',
         marginBottom: 5,
     },
     occupiedQuantity: {
+        fontSize: 13,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#e74c3c',
     },
     availableCapacity: {
+        fontSize: 13,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#f1c40f',
     },
     checkIcon: {
         position: 'absolute',
-        top: 20,
-        left: 50,
+        bottom: 10,
+        right: 10,
     },
     disabledIcon: {
         position: 'absolute',
-        top: 20,
-        left: 50,
+        bottom: 10,
+        right: 10,
     },
-})
+});
+
 
 export default ModalOptionLocation;

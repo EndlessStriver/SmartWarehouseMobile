@@ -14,7 +14,6 @@ interface ModalOptionShelfProps {
     setModalVisible: (value: boolean) => void;
     categoryName: string,
     typeShelf: string,
-    setLocationSelect: (data: LocationType) => void;
     receiveItem?: ReceiveItem
     quantity: number
     productIsCheck: ProductIsCheckType[]
@@ -68,14 +67,17 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
         <Modal
             visible={props.isModalVisible}
             onRequestClose={() => props.setModalVisible(false)}
-            animationType="fade"
+            animationType="slide"
+            transparent={true}
         >
             <View
                 style={{
                     flex: 1,
-                    padding: 10,
-                    alignItems: 'flex-start',
-                    backgroundColor: '#fff',
+                    padding: 15,
+                    backgroundColor: '#F5F5F5',
+                    borderRadius: 10,
+                    margin: 20,
+                    elevation: 5,
                 }}
             >
                 <View
@@ -84,13 +86,13 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        marginBottom: 10,
+                        marginBottom: 15,
                     }}
                 >
                     <Text
                         style={{
-                            fontSize: 20,
-                            fontWeight: "bold",
+                            fontSize: 24,
+                            fontWeight: "600",
                             color: "#3498db",
                         }}
                     >
@@ -99,54 +101,63 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
                     <TouchableOpacity
                         onPress={() => props.setModalVisible(false)}
                     >
-                        <FontAwesome name="close" size={24} color="black" />
+                        <FontAwesome name="close" size={28} color="black" />
                     </TouchableOpacity>
                 </View>
+
                 <View
                     style={{
                         flexDirection: "row",
                         gap: 10,
-                        marginBottom: 10,
+                        marginBottom: 15,
+                        alignItems: 'center'
                     }}
                 >
                     <Checkbox
                         value={isChecked}
                         onValueChange={setChecked}
-                        color={isChecked ? '#4630EB' : undefined}
+                        color={isChecked ? '#3498db' : '#C0C0C0'}
                     />
-                    <Text>Lấy tất cả kệ</Text>
+                    <Text style={{ fontSize: 16, color: '#333' }}>Lấy tất cả kệ</Text>
                 </View>
+
                 <FlatList
-                    style={{ width: "100%" }}
+                    showsVerticalScrollIndicator={false}
+                    style={{
+                        width: "100%",
+                        marginBottom: 20,
+                    }}
                     data={shelfs}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                        <View
+                        <TouchableOpacity
+                            onPress={() => {
+                                setSelectedShelf(item);
+                                setIsModalLocationVisible(true);
+                            }}
                             style={{
-                                backgroundColor: "#ecf0f1",
-                                padding: 15,
-                                marginBottom: 10,
-                                borderRadius: 5,
+                                backgroundColor: "#ffffff",
+                                padding: 18,
+                                marginBottom: 15,
+                                borderRadius: 8,
                                 flexDirection: "row",
                                 justifyContent: "space-between",
+                                borderWidth: 1,
+                                borderColor: "#ddd",
+                                shadowColor: "#000",
+                                shadowOffset: { width: 0, height: 1 },
+                                shadowOpacity: 0.2,
+                                shadowRadius: 2,
                             }}
                         >
-                            <View>
-                                <Text><Text style={{ fontWeight: "bold" }}>Tên kệ:</Text> {item.name}</Text>
-                                <Text><Text style={{ fontWeight: "bold" }}>Thể tích khả dụng:</Text> {(Number(item.maxCapacity) - Number(item.currentCapacity)).toLocaleString()} cm3</Text>
-                                <Text><Text style={{ fontWeight: "bold" }}>Khối lượng còn có thể chứa:</Text> {(Number(item.maxWeight) - Number(item.currentWeight)).toLocaleString()} kg</Text>
-                                <Text><Text style={{ fontWeight: "bold" }}>Loại kệ:</Text> {item.typeShelf === "NORMAL" ? "Kệ thường" : "Chứa hàng lỗi"}</Text>
-                                <Text><Text style={{ fontWeight: "bold" }}>Loại hàng:</Text> {item.category.name}</Text>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ fontSize: 16, fontWeight: "600" }}>Tên kệ: {item.name}</Text>
+                                <Text style={{ fontSize: 14, color: '#555' }}>Thể tích khả dụng: {(Number(item.maxCapacity) - Number(item.currentCapacity)).toLocaleString()} cm³</Text>
+                                <Text style={{ fontSize: 14, color: '#555' }}>Khối lượng còn có thể chứa: {(Number(item.maxWeight) - Number(item.currentWeight)).toLocaleString()} kg</Text>
+                                <Text style={{ fontSize: 14, color: '#555' }}>Loại kệ: {item.typeShelf === "NORMAL" ? "Kệ thường" : "Chứa hàng lỗi"}</Text>
+                                <Text style={{ fontSize: 14, color: '#555' }}>Loại hàng: {item.category.name}</Text>
                             </View>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setSelectedShelf(item);
-                                    setIsModalLocationVisible(true);
-                                }}
-                            >
-                                <Text style={{ color: "#3498db", fontWeight: "bold" }}>Chọn</Text>
-                            </TouchableOpacity>
-                        </View>
+                        </TouchableOpacity>
                     )}
                 />
             </View>
@@ -154,7 +165,6 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
                 isModalVisible={isModalLocationVisible}
                 setModalVisible={setIsModalLocationVisible}
                 shelf={selectedShelf}
-                setLocationSelect={props.setLocationSelect}
                 receiveItem={props.receiveItem}
                 quantity={props.quantity}
                 productIsCheck={props.productIsCheck}

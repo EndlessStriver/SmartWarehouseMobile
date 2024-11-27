@@ -27,7 +27,7 @@ const GetReceives = async (limit?: number, offset?: number, order?: "ASC" | "DES
     try {
         const HOST = process.env.EXPO_PUBLIC_API_URL;
         const token = await getData('token');
-        const response = await axios.get(`${HOST}/receives?limit=${limit || 10}&offset=${offset || 1}&order=${order || "ASC"}&orderBy=${orderBy || "receiveDate"}`, {
+        const response = await axios.get(`${HOST}/receives?limit=${limit || 10}&offset=${offset || 1}&order=${order || "DESC"}&orderBy=${orderBy || "create_at"}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

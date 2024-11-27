@@ -2,7 +2,7 @@ import CreateReceiveCheck from "@/service/CreateReceiveCheck";
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
 import GetStockEntryById, { GoodsReceipt } from "@/service/GetStockEntryById";
 import FormatDate from "@/unit/FormatDate";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import ModalAddProductCheck from "./handlestockentrycomp/ModalAddProductCheck";
@@ -23,7 +23,6 @@ const HandleStockEntry = () => {
     const [loading, setLoading] = useState(true);
     const [isModalVisible, setModalVisible] = useState(false);
     const [productIsCheck, setProductIsCheck] = useState<ProductIsCheckType[]>([]);
-    const navigation = useNavigation();
 
     useEffect(() => {
         GetAccountInformationCurrent()
@@ -47,8 +46,8 @@ const HandleStockEntry = () => {
             .finally(() => setLoading(false))
     }, [receiveId])
 
-    const addProductIsCheck = (product: ProductIsCheckType) => {
-        setProductIsCheck([...productIsCheck, product])
+    const addProductIsCheck = (products: ProductIsCheckType[]) => {
+        setProductIsCheck([...productIsCheck, ...products])
     }
 
     const checkQuantityInbound = (receiveItemId: string) => {
@@ -65,40 +64,51 @@ const HandleStockEntry = () => {
     }
 
     const handleSubmit = () => {
-        if (receiveOrder) {
-            for (const item of receiveOrder.receiveItems) {
-                if (checkQuantityInbound(item.id) !== item.quantity) {
-                    Alert.alert("Error", "Số lượng sản phẩm kiểm tra chưa đủ");
-                    return;
-                }
+        if (!receiveOrder) return;
+
+        for (const item of receiveOrder.receiveItems) {
+            if (checkQuantityInbound(item.id) !== item.quantity) {
+                Alert.alert("Lỗi", "Số lượng sản phẩm kiểm tra chưa đủ");
+                return;
             }
         }
-        CreateReceiveCheck({
-            receiveId: receiveOrder?.id || "",
-            receiveDate: new Date().toISOString(),
-            receiveBy: user?.fullName || "",
-            supplierId: receiveOrder?.supplier.id || "",
-            receiveItems: productIsCheck.map((item) => ({
-                receiveItemId: item.receiveItemId,
-                receiveQuantity: item.quantityCheck,
-                itemStatus: item.statusProduct === "NORMAL" ? true : false,
-                locationId: item.location.value
-            }))
-        })
-            .then(() => {
-                Alert.alert("Success", "Kiểm tra sản phẩm thành công");
-                navigation.reset({
-                    index: 1,
-                    routes: [
-                        { name: "home" as never },
-                        { name: "stockentry" as never }
-                    ]
-                })
-            })
-            .catch((err) => {
-                Alert.alert("Error", err.message)
-            })
-    }
+
+        Alert.alert(
+            "Xác nhận",
+            "Bạn có chắc chắn muốn xử lý phiếu nhập kho này?",
+            [
+                {
+                    text: "Hủy",
+                    style: "cancel",
+                },
+                {
+                    text: "Xác nhận",
+                    onPress: () => {
+                        CreateReceiveCheck({
+                            receiveId: receiveOrder?.id || "",
+                            receiveDate: new Date().toISOString(),
+                            receiveBy: user?.fullName || "",
+                            supplierId: receiveOrder?.supplier.id || "",
+                            receiveItems: productIsCheck.map((item) => ({
+                                receiveItemId: item.receiveItemId,
+                                receiveQuantity: item.quantityCheck,
+                                itemStatus: item.statusProduct === "NORMAL" ? true : false,
+                                locationId: item.location.value,
+                            })),
+                        })
+                            .then(() => {
+                                Alert.alert("Thành công", "Kiểm tra sản phẩm thành công");
+                                router.replace("/tabs/stockentry");
+                            })
+                            .catch((err) => {
+                                Alert.alert("Lỗi", err.message);
+                            });
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -106,7 +116,6 @@ const HandleStockEntry = () => {
                 <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
             ) : (
                 <View style={styles.contentContainer}>
-                    {/* Header thông tin */}
                     <View style={styles.headerContainer}>
                         <View>
                             <Text style={styles.infoText}>
@@ -128,16 +137,6 @@ const HandleStockEntry = () => {
                         </View>
                         <View style={styles.actionsContainer}>
                             <TouchableOpacity
-                                onPress={() => {
-                                    router.push({
-                                        pathname: "/createstockentry",
-                                        params: { receiveId: receiveOrder?.id },
-                                    });
-                                }}
-                            >
-                                <Text style={styles.editButton}>Chỉnh sửa</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
                                 disabled={productIsCheck.length === 0}
                                 onPress={handleSubmit}
                                 style={{
@@ -151,7 +150,7 @@ const HandleStockEntry = () => {
 
                     <View style={styles.productHeader}>
                         <Text style={styles.productHeaderText}>
-                            Danh sách sản phẩm đã kiểm tra
+                            Danh Sách Đã Kiểm Tra
                         </Text>
                         <TouchableOpacity
                             onPress={() => setModalVisible(true)}
@@ -167,6 +166,8 @@ const HandleStockEntry = () => {
                         </Text>
                     ) : (
                         <FlatList
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
                             data={productIsCheck}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item }) => (
@@ -253,17 +254,17 @@ const styles = StyleSheet.create({
     productHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         marginBottom: 10,
     },
     productHeaderText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#3498db',
     },
     addButton: {
         padding: 5,
-        backgroundColor: '#2ecc71',
+        backgroundColor: '#3498db',
         borderRadius: 5,
     },
     addButtonText: {

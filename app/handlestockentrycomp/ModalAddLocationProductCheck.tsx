@@ -6,12 +6,13 @@ import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, 
 import { FontAwesome } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import ModalOptionShelf from "./ModalOptionShelf";
+import ModalRecomentAddProductToLocation from "./ModalRecomentAddProductToLocation";
 
 interface ModalAddLocationProductCheckProps {
     isModalVisible: boolean;
     setModalVisible: (value: boolean) => void;
     receiveItem?: ReceiveItem,
-    addProductIsCheck: (product: ProductIsCheckType) => void;
+    addProductIsCheck: (products: ProductIsCheckType[]) => void;
     checkquantityInbound: (receiveItemId: string) => number;
     productIsCheck: ProductIsCheckType[];
 }
@@ -19,20 +20,23 @@ interface ModalAddLocationProductCheckProps {
 export interface LocationType {
     value: string,
     lable: string,
-    maxQuantityInbound: number
+    maxQuantityInbound: number,
+    inputQuantity: string,
+    isCheck: boolean,
 }
 
 const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> = (props) => {
 
     const [numberQuantityCheck, setNumberQuantityCheck] = useState("");
     const [statusProduct, setStatusProduct] = useState("NORMAL");
-    const [locationSelect, setLocationSelect] = useState<LocationType>({
-        value: "",
-        lable: "Vị trí...",
-        maxQuantityInbound: 0
-    });
+    const [locationSelect, setLocationSelect] = useState<LocationType[]>([]);
     const [locations, setLocations] = useState<LocationType[]>([]);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalRecomentAddProductToLocation, setModalRecomentAddProductToLocation] = useState(false);
+
+    useEffect(() => {
+        setNumberQuantityCheck(props.receiveItem?.quantity.toString() || "");
+    }, [props.receiveItem])
 
     useEffect(() => {
         const id = setTimeout(() => {
@@ -47,18 +51,20 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                         setLocations(res.map((item) => ({
                             value: item.locationId,
                             lable: item.locationCode,
-                            maxQuantityInbound: item.maxQuantityInbound
+                            maxQuantityInbound: item.maxQuantityInbound,
+                            inputQuantity: item.maxQuantityInbound.toString(),
+                            isCheck: false,
                         })))
                     })
             }
         }, 500);
         return () => clearTimeout(id);
-    }, [numberQuantityCheck, statusProduct])
+    }, [numberQuantityCheck, statusProduct, props.receiveItem])
 
     useEffect(() => {
         const id = setTimeout(() => {
             if (validateNumber(numberQuantityCheck) || Number(numberQuantityCheck) <= 0) {
-                setLocationSelect({ value: "", lable: "Vị trí...", maxQuantityInbound: 0 });
+                setLocationSelect([]);
                 setLocations([]);
             }
         }, 500);
@@ -86,31 +92,40 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
 
     const handleSubmit = () => {
         if (numberQuantityCheck === "" || !validateNumber(numberQuantityCheck)) {
-            Alert.alert("Error", "Số lượng kiểm tra không hợp lệ");
+            Alert.alert("Lỗi", "Số lượng kiểm tra không hợp lệ");
             return;
         }
         if (Number(numberQuantityCheck) + props.checkquantityInbound(props.receiveItem?.id || "") > Number(props.receiveItem?.quantity) || 0) {
-            Alert.alert("Error", "Số lượng kiểm tra không được lớn hơn số lượng cần nhập");
+            Alert.alert("Lỗi", "Số lượng kiểm tra không được lớn hơn số lượng cần nhập");
             return;
         }
         if (statusProduct === "") {
-            Alert.alert("Error", "Vui lòng chọn tình trạng sản phẩm");
+            Alert.alert("Lỗi", "Vui lòng chọn tình trạng sản phẩm");
             return;
         }
-        if (locationSelect.value === "") {
-            Alert.alert("Error", "Vui lòng chọn vị tri chứa sản phẩm");
+        if (locationSelect.length === 0) {
+            Alert.alert("Lỗi", "Vui lòng chọn vị tri chứa sản phẩm");
             return;
         }
-        props.addProductIsCheck({
-            productName: props.receiveItem?.product.name || "",
-            receiveItemId: props.receiveItem?.id || "",
-            quantityCheck: Number(numberQuantityCheck),
-            statusProduct: statusProduct,
-            location: locationSelect
-        });
+        if (locationSelect.reduce((acc, location) => acc + (Number(location.inputQuantity)), 0) !== Number(numberQuantityCheck)) {
+            Alert.alert("Lỗi", "Tổng số lượng nhập vào các vị trí không bằng số lượng kiểm tra");
+            return;
+        }
+        props.addProductIsCheck(locationSelect.map((location) => {
+            return {
+                productName: props.receiveItem?.product.name || "",
+                receiveItemId: props.receiveItem?.id || "",
+                quantityCheck: Number(location.inputQuantity),
+                statusProduct: statusProduct,
+                location: {
+                    lable: location.lable,
+                    value: location.value,
+                }
+            }
+        }));
         setNumberQuantityCheck("");
         setStatusProduct("NORMAL");
-        setLocationSelect({ value: "", lable: "Vị trí...", maxQuantityInbound: 0 });
+        setLocationSelect([]);
         props.setModalVisible(false);
     }
 
@@ -123,7 +138,12 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
             <View style={styles.modalContainer}>
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Kiểm Tra Sản Phẩm</Text>
-                    <TouchableOpacity onPress={() => props.setModalVisible(false)}>
+                    <TouchableOpacity onPress={() => {
+                        props.setModalVisible(false)
+                        setNumberQuantityCheck("");
+                        setStatusProduct("NORMAL");
+                        setLocationSelect([]);
+                    }}>
                         <FontAwesome name="close" size={24} color="black" />
                     </TouchableOpacity>
                 </View>
@@ -132,6 +152,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                     <View>
                         <Text><Text style={styles.boldText}>Mã sản phẩm: </Text>{props.receiveItem?.product.productCode}</Text>
                         <Text><Text style={styles.boldText}>Tên sản phẩm: </Text>{props.receiveItem?.product.name}</Text>
+                        <Text><Text style={styles.boldText}>Số lượng cần kiểm tra: </Text>{props.receiveItem?.quantity}</Text>
                         <Text><Text style={styles.boldText}>Đơn vị tính: </Text>{props.receiveItem?.product.units[0].name}</Text>
                     </View>
                     <View>
@@ -162,60 +183,68 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
 
                 <View style={styles.locationSelectContainer}>
                     <Text style={styles.locationText}>
-                        Chọn vị trí chứa: <Text style={locationSelect.value === "" ? styles.errorText : styles.validText}>{locationSelect.lable}</Text>
+                        Danh sách vị trí chứa sản phẩm
                     </Text>
-                    <TouchableOpacity
-                        disabled={statusProduct === "" || (numberQuantityCheck === "" || Number(numberQuantityCheck) <= 0)}
-                        onPress={() => setModalVisible(true)}
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 10,
+                        }}
                     >
-                        <Text style={styles.customizeButton}>
-                            Tùy chỉnh
-                        </Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setModalRecomentAddProductToLocation(true)}
+                        >
+                            <Text style={{ color: "#e67e22", fontWeight: "bold" }}>Đề xuất</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setModalVisible(true)}
+                        >
+                            <Text style={{ color: "#3498db", fontWeight: "bold" }}>Tùy chỉnh</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-
-                {filterLocation().length === 0 ? (
-                    <Text style={styles.errorText}>Không tìm thấy vị trí chứa phù hợp</Text>
-                ) : (
-                    <FlatList
-                        style={styles.flatList}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}
-                        data={filterLocation()}
-                        keyExtractor={(item) => item.value}
-                        renderItem={({ item }) => (
-                            <View style={[styles.locationItem, { backgroundColor: locationSelect.value !== item.value ? "#ecf0f1" : "#3498db" }]}>
-                                <Text>Kệ <Text style={styles.boldText}>{item.lable}</Text> có thể chứa ({item.maxQuantityInbound})</Text>
-                                <TouchableOpacity
-                                    style={styles.locationButton}
-                                    disabled={locationSelect.value !== "" && locationSelect.value !== item.value}
-                                    onPress={() => {
-                                        if (locationSelect.value === item.value) {
-                                            setLocationSelect({ value: "", lable: "Vị trí...", maxQuantityInbound: 0 });
-                                        } else {
-                                            setLocationSelect({ value: item.value, lable: item.lable, maxQuantityInbound: item.maxQuantityInbound });
-                                        }
-                                    }}
-                                >
-                                    <Text style={[styles.locationButtonText, { color: locationSelect.value === item.value ? "#fff" : "#3498db" }]}>
-                                        {locationSelect.value === item.value ? "Hủy" : "Chọn"}
+                {
+                    locationSelect.length > 0 ?
+                        <FlatList
+                            style={styles.flatList}
+                            data={locationSelect}
+                            keyExtractor={(item) => item.value}
+                            renderItem={({ item }) => (
+                                <View style={styles.locationItem}>
+                                    <Text style={styles.locationText}>
+                                        Kệ <Text style={styles.boldText}>{item.lable}</Text> số lượng{" "} <Text style={styles.boldText}>({item.inputQuantity})</Text>
                                     </Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                    />
-                )}
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setLocationSelect(locationSelect.filter((location) => location.value !== item.value))
+                                        }}
+                                    >
+                                        <Text style={{ color: "red" }}>Xóa</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        />
+                        :
+                        <Text style={{ color: "#7f8c8d", textAlign: "center" }}>Chưa chọn vị trí chứa sản phẩm</Text>
+                }
             </View>
-
             <ModalOptionShelf
                 isModalVisible={isModalVisible}
                 setModalVisible={setModalVisible}
                 typeShelf={statusProduct}
                 categoryName={props.receiveItem?.product.category.name || ""}
-                setLocationSelect={setLocationSelect}
+                // setLocationSelect={setLocationSelect}
                 receiveItem={props.receiveItem}
                 quantity={Number(numberQuantityCheck)}
                 productIsCheck={props.productIsCheck}
+            />
+            <ModalRecomentAddProductToLocation
+                isModalVisible={isModalRecomentAddProductToLocation}
+                setModalVisible={() => setModalRecomentAddProductToLocation(false)}
+                recomentLocation={filterLocation()}
+                setLocationsSelected={setLocationSelect}
+                numberQuantityCheck={numberQuantityCheck}
             />
         </Modal>
 
@@ -226,90 +255,98 @@ const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#F9FAFB',
     },
     header: {
-        width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 20,
     },
     headerText: {
-        fontSize: 22,
-        fontWeight: "bold",
-        color: "#3498db",
+        fontSize: 24,
+        fontWeight: "700",
+        color: "#2C3E50",
     },
     productInfoContainer: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "space-between",
         marginBottom: 20,
+        padding: 15,
+        borderRadius: 8,
+        backgroundColor: "#FFFFFF",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1,
+        elevation: 2,
     },
     boldText: {
-        fontWeight: "bold",
+        fontWeight: "600",
+        color: "#34495E",
     },
     saveButton: {
-        padding: 10,
-        backgroundColor: "#3498db",
+        padding: 12,
+        backgroundColor: "#1ABC9C",
         borderRadius: 5,
-        color: "#fff",
-        fontWeight: "bold",
+        color: "#FFFFFF",
+        fontWeight: "600",
+        textAlign: "center",
     },
     picker: {
-        width: "100%",
-        backgroundColor: "#ecf0f1",
+        backgroundColor: "#ECF0F1",
         marginVertical: 10,
         paddingHorizontal: 10,
         borderRadius: 5,
+        borderWidth: 1,
+        borderColor: "#D0D3D4",
     },
     input: {
         width: "100%",
-        padding: 10,
+        padding: 12,
         borderWidth: 1,
         borderRadius: 5,
+        borderColor: "#D0D3D4",
+        backgroundColor: "#FFFFFF",
         marginTop: 5,
+        fontSize: 16,
     },
     locationSelectContainer: {
-        width: "100%",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: 15,
+        marginBottom: 20,
     },
     locationText: {
-        fontWeight: "bold",
-    },
-    errorText: {
-        color: "red",
-    },
-    validText: {
-        color: "#3498db",
-    },
-    customizeButton: {
-        color: "#3498db",
-        fontWeight: "bold",
+        fontWeight: "700",
+        color: "#2C3E50",
     },
     flatList: {
-        width: "100%",
+        marginTop: 10,
     },
     locationItem: {
-        padding: 15,
-        marginBottom: 10,
-        borderRadius: 5,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-    },
-    locationButton: {
-        padding: 5,
-        borderRadius: 5,
+        padding: 15,
+        marginBottom: 10,
+        borderRadius: 8,
+        backgroundColor: "#FFFFFF",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1,
+        elevation: 2,
     },
     locationButtonText: {
-        fontWeight: "bold",
+        color: "#E74C3C",
+        fontWeight: "600",
+    },
+    customizeButton: {
+        color: "#3498DB",
+        fontWeight: "600",
     },
 });
+
 
 
 export default ModalAddLocationProductCheck;
