@@ -17,6 +17,8 @@ interface ModalOptionShelfProps {
     receiveItem?: ReceiveItem
     quantity: number
     productIsCheck: ProductIsCheckType[]
+    addLocationSelect: (location: LocationType) => void
+    locationIsSelect: LocationType[]
 }
 
 const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
@@ -168,6 +170,8 @@ const ModalOptionShelf: React.FC<ModalOptionShelfProps> = (props) => {
                 receiveItem={props.receiveItem}
                 quantity={props.quantity}
                 productIsCheck={props.productIsCheck}
+                addLocationSelect={props.addLocationSelect}
+                locationIsSelect={props.locationIsSelect}
             />
         </Modal>
     )

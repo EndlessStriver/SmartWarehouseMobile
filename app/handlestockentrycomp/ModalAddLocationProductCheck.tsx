@@ -71,6 +71,26 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
         return () => clearTimeout(id);
     }, [numberQuantityCheck, statusProduct])
 
+    useEffect(() => {
+        const newLocations = locations.map((location) => {
+            let a = locationSelect.find((item) => item.value === location.value)
+            if (a) {
+                return {
+                    ...location,
+                    inputQuantity: a.inputQuantity,
+                    isCheck: true,
+                }
+            } else {
+                return {
+                    ...location,
+                    inputQuantity: location.maxQuantityInbound.toString(),
+                    isCheck: false,
+                }
+            }
+        })
+        setLocations(newLocations);
+    }, [locationSelect])
+
     const validateNumber = (value: string) => {
         let regexNumber = /^[0-9]+$/;
         return regexNumber.test(value);
@@ -86,8 +106,36 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
         return check;
     }
 
+    const checkLocationIsSelect = (value: string) => {
+        let check = false;
+        locationSelect.forEach((location) => {
+            if (location.value === value) {
+                check = true;
+            }
+        })
+        return check;
+    }
+
     const filterLocation = () => {
-        return locations.filter((item) => checkLocationInProductIsCheck(item.value) === false)
+        return locations.filter((item) => checkLocationInProductIsCheck(item.value) === false && checkLocationIsSelect(item.value) === false)
+    }
+
+    const addLocationSelect = (location: LocationType) => {
+        if (locationSelect.length === 0) {
+            setLocationSelect([location]);
+            return;
+        }
+        if (locationSelect.length > 0) {
+            let check = false;
+            locationSelect.forEach((item) => {
+                if (item.value === location.value) {
+                    check = true;
+                }
+            })
+            if (check === false) {
+                setLocationSelect([...locationSelect, location]);
+            }
+        }
     }
 
     const handleSubmit = () => {
@@ -234,10 +282,11 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                 setModalVisible={setModalVisible}
                 typeShelf={statusProduct}
                 categoryName={props.receiveItem?.product.category.name || ""}
-                // setLocationSelect={setLocationSelect}
+                addLocationSelect={addLocationSelect}
                 receiveItem={props.receiveItem}
                 quantity={Number(numberQuantityCheck)}
                 productIsCheck={props.productIsCheck}
+                locationIsSelect={locationSelect}
             />
             <ModalRecomentAddProductToLocation
                 isModalVisible={isModalRecomentAddProductToLocation}

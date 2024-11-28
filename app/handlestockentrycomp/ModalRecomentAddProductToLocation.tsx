@@ -50,7 +50,10 @@ const ModalRecomentAddProductToLocation: React.FC<ModalRecomentAddProductToLocat
     }
 
     const handleSubmit = () => {
-
+        if (myLocationsSelected.filter((localtion) => localtion.isCheck).length === 0) {
+            Alert.alert("Lỗi", "Vui lòng chọn ít nhất 1 vị trí để chứa sản phẩm");
+            return;
+        }
         if (myLocationsSelected.filter((localtion) => localtion.isCheck).reduce((acc, location) => acc + (Number(location.inputQuantity)), 0) > Number(props.numberQuantityCheck)) {
             Alert.alert("Lỗi", "Số lượng nhập vào không được lớn hơn số lượng đã kiểm tra");
             return;

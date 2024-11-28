@@ -6,6 +6,7 @@ import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "reac
 export default function Index() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const validateForm = () => {
@@ -22,6 +23,7 @@ export default function Index() {
 
   const login = () => {
     if (validateForm()) {
+      setLoading(true);
       LoginService(username, password)
         .then(() => {
           router.replace('/tabs/stockentry');
@@ -29,6 +31,9 @@ export default function Index() {
         .catch((error) => {
           console.log(error);
           Alert.alert('Đăng nhập thất bại', 'Tên đăng nhập hoặc mật khẩu không đúng');
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }
@@ -51,8 +56,8 @@ export default function Index() {
         secureTextEntry={true}
         placeholderTextColor="#95a5a6"
       />
-      <TouchableOpacity onPress={login} style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>Đăng Nhập</Text>
+      <TouchableOpacity disabled={loading} onPress={login} style={[styles.loginButton, { opacity: loading ? 0.5 : 1 }]}>
+        <Text style={styles.loginButtonText}>{loading ? "Đang đăng nhập..." : "Đăng nhập"}</Text>
       </TouchableOpacity>
     </View>
   );
