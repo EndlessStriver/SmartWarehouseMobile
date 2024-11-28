@@ -2,7 +2,7 @@ import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import FormatDate from "@/unit/FormatDate";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const StockEntry: React.FC = () => {
 
@@ -10,23 +10,51 @@ const StockEntry: React.FC = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = () => {
+        setRefreshing(true);
+        setReceives([]);
+        setPage(1);
+        setHasMore(true);
+        setRefreshing(false);
+    };
 
     useEffect(() => {
-        setLoading(true);
-        GetReceives(10, page)
-            .then(data => {
-                if (data.data.length === 0) {
-                    setHasMore(false);
-                } else {
-                    setReceives((preData) => [...preData, ...data.data]);
-                }
-            })
-            .catch(error => {
-                Alert.alert('Error', error.message);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        if (hasMore) {
+            if (page === 1) {
+                setLoading(true);
+                GetReceives(10, page)
+                    .then(data => {
+                        if (data.data.length === 0) {
+                            setHasMore(false);
+                        } else {
+                            setReceives(data.data);
+                        }
+                    })
+                    .catch(error => {
+                        Alert.alert('Error', error.message);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            } else {
+                setLoading(true);
+                GetReceives(10, page)
+                    .then(data => {
+                        if (data.data.length === 0) {
+                            setHasMore(false);
+                        } else {
+                            setReceives((preData) => [...preData, ...data.data]);
+                        }
+                    })
+                    .catch(error => {
+                        Alert.alert('Error', error.message);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            }
+        }
     }, [page]);
 
     const loadMore = () => {
@@ -44,14 +72,19 @@ const StockEntry: React.FC = () => {
         <View style={styles.container}>
             <FlatList
                 style={{
-                    width: '100%'
+                    width: '100%',
+                    flex: 1,
                 }}
                 data={receives}
+                keyExtractor={item => item.id}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 ListFooterComponent={renderFooter}
-                onEndReachedThreshold={0.75}
+                onEndReachedThreshold={0.1}
                 onEndReached={loadMore}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         onPress={() => {
@@ -107,7 +140,6 @@ const StockEntry: React.FC = () => {
                         </Text>
                     </TouchableOpacity>
                 )}
-                keyExtractor={item => item.id}
             />
         </View>
     );

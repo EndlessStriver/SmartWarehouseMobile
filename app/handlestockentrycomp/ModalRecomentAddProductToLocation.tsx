@@ -54,6 +54,10 @@ const ModalRecomentAddProductToLocation: React.FC<ModalRecomentAddProductToLocat
             Alert.alert("Lỗi", "Vui lòng chọn ít nhất 1 vị trí để chứa sản phẩm");
             return;
         }
+        if (myLocationsSelected.some((localtion) => localtion.isCheck && (localtion.inputQuantity === "" || Number(localtion.inputQuantity) === 0 || !/^[0-9]*$/.test(localtion.inputQuantity)))) {
+            Alert.alert("Lỗi", "Số lượng nhập không hợp lệ");
+            return
+        }
         if (myLocationsSelected.filter((localtion) => localtion.isCheck).reduce((acc, location) => acc + (Number(location.inputQuantity)), 0) > Number(props.numberQuantityCheck)) {
             Alert.alert("Lỗi", "Số lượng nhập vào không được lớn hơn số lượng đã kiểm tra");
             return;
