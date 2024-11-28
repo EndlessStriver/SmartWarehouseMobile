@@ -36,6 +36,8 @@ const InventoryDetail = () => {
                             productName: detail.products.name,
                             quantity: detail.quantity,
                             isIncrease: detail.isIncrease,
+                            quantityBegin: detail.location.quantity,
+                            quantityReal: (detail.quantity !== 0 && (detail.isIncrease ? detail.location.quantity - detail.quantity : detail.location.quantity + detail.quantity)) || detail.location.quantity,
                         };
                     }),
                 };
@@ -72,6 +74,12 @@ const InventoryDetail = () => {
                             {item.productName}
                         </Text>
                         <Text style={styles.itemText} numberOfLines={2} ellipsizeMode="tail">
+                            {item.quantityBegin}
+                        </Text>
+                        <Text style={styles.itemText} numberOfLines={2} ellipsizeMode="tail">
+                            {item.quantityReal}
+                        </Text>
+                        <Text style={styles.itemText} numberOfLines={2} ellipsizeMode="tail">
                             {item.quantity}
                         </Text>
                         <Text
@@ -97,9 +105,11 @@ const InventoryDetail = () => {
                             </Text>
                         </View>
                         <View style={[styles.itemContainer, styles.headerItemContainer]}>
-                            <Text style={[styles.itemText, styles.headerItemText]}>Mã vị trí</Text>
+                            <Text style={[styles.itemText, styles.headerItemText]}>Vị trí</Text>
                             <Text style={[styles.itemText, styles.headerItemText]}>Sản phẩm</Text>
-                            <Text style={[styles.itemText, styles.headerItemText]}>Số lượng</Text>
+                            <Text style={[styles.itemText, styles.headerItemText]}>SL ban đầu</Text>
+                            <Text style={[styles.itemText, styles.headerItemText]}>SL thực tế</Text>
+                            <Text style={[styles.itemText, styles.headerItemText]}>SL hiệu chỉnh</Text>
                             <Text style={[styles.itemText, styles.headerItemText]}>Tăng/Giảm</Text>
                         </View>
                     </View>
@@ -180,10 +190,11 @@ const styles = StyleSheet.create({
         elevation: 1,
     },
     itemText: {
-        fontSize: 13,
+        fontSize: 12,
         color: "#333",
         flex: 1,
         textAlign: "center",
+        verticalAlign: "middle",
         marginHorizontal: 5,
         overflow: "hidden",
     },
