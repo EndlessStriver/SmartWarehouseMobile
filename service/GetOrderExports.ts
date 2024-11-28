@@ -36,6 +36,7 @@ interface ExportOrderResponse {
     limit: number;
     offset: number;
     totalElementOfPage: number;
+    pending: number;
 }
 
 

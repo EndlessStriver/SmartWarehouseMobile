@@ -1,16 +1,18 @@
 import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import FormatDate from "@/unit/FormatDate";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useNavigation } from "expo-router";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const StockEntry: React.FC = () => {
 
+    const navigation = useNavigation();
     const [receives, setReceives] = useState<ReceiveRecord[]>([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [tabBarBageNumber, setTabBarBageNumber] = useState(0);
     const onRefresh = () => {
         setRefreshing(true);
         setReceives([]);
@@ -18,6 +20,16 @@ const StockEntry: React.FC = () => {
         setHasMore(true);
         setRefreshing(false);
     };
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            tabBarBadgeStyle: {
+                color: 'white',
+                backgroundColor: 'red',
+            },
+            tabBarBadge: tabBarBageNumber !== 0 ? tabBarBageNumber : null,
+        });
+    }, [navigation, tabBarBageNumber]);
 
     useEffect(() => {
         if (hasMore) {
@@ -29,6 +41,7 @@ const StockEntry: React.FC = () => {
                             setHasMore(false);
                         } else {
                             setReceives(data.data);
+                            setTabBarBageNumber(data.pending);
                         }
                     })
                     .catch(error => {
@@ -45,6 +58,7 @@ const StockEntry: React.FC = () => {
                             setHasMore(false);
                         } else {
                             setReceives((preData) => [...preData, ...data.data]);
+                            setTabBarBageNumber(data.pending);
                         }
                     })
                     .catch(error => {
@@ -80,7 +94,7 @@ const StockEntry: React.FC = () => {
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 ListFooterComponent={renderFooter}
-                onEndReachedThreshold={0.1}
+                onEndReachedThreshold={0.5}
                 onEndReached={loadMore}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

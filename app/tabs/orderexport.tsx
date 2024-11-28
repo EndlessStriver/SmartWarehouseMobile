@@ -1,26 +1,97 @@
 import GetOrderExports, { ExportOrder } from "@/service/GetOrderExports";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { router, useNavigation } from "expo-router";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const OrderExport: React.FC = () => {
+    const navigation = useNavigation();
+    const [tabBarBageNumber, setTabBarBageNumber] = useState(0);
     const [orderExports, setOrderExports] = useState<ExportOrder[]>([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        setOrderExports([]);
+        setPage(1);
+        setHasMore(true);
+        setRefreshing(false);
+    };
 
     useEffect(() => {
-        GetOrderExports()
-            .then((res) => {
-                setOrderExports(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-                Alert.alert('Lỗi', 'Không thể lấy dữ liệu phiếu xuất kho');
-            });
-    }, []);
+        if (page === 1) {
+            setLoading(true);
+            GetOrderExports(10, 1)
+                .then(data => {
+                    if (data.data.length === 0) {
+                        setHasMore(false);
+                    } else {
+                        setOrderExports(data.data);
+                        setTabBarBageNumber(data.pending);
+                    }
+                })
+                .catch(error => {
+                    Alert.alert('Error', error.message);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        } else {
+            setLoading(true);
+            GetOrderExports(10, page)
+                .then(data => {
+                    if (data.data.length === 0) {
+                        setHasMore(false);
+                    } else {
+                        setOrderExports((preData) => [...preData, ...data.data]);
+                        setTabBarBageNumber(data.pending);
+                    }
+                })
+                .catch(error => {
+                    Alert.alert('Error', error.message);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [page]);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            tabBarBadgeStyle: {
+                color: 'white',
+                backgroundColor: 'red',
+            },
+            tabBarBadge: tabBarBageNumber !== 0 ? tabBarBageNumber : null,
+
+        });
+    }, [navigation, tabBarBageNumber]);
+
+    const loadMore = () => {
+        if (!loading && hasMore) {
+            setPage((prePage) => prePage + 1);
+        }
+    }
+
+    const renderFooter = () => {
+        if (!loading) return null;
+        return <ActivityIndicator size="large" color="#3498db" />;
+    };
 
     return (
         <View style={styles.container}>
             <FlatList
                 data={orderExports}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                ListFooterComponent={renderFooter}
+                onEndReachedThreshold={0.5}
+                onEndReached={loadMore}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <TouchableOpacity
