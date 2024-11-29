@@ -17,12 +17,13 @@ interface InventoryData {
 }
 
 
-const CreateInventoryAPI = async (data: InventoryData): Promise<void> => {
+const CreateInventoryAPI = async (iventoryId: string, data: InventoryData): Promise<void> => {
+    console.log(iventoryId);
     console.log(data);
     try {
         const HOST = process.env.EXPO_PUBLIC_API_URL;
         const token = await getData('token');
-        const response = await axios.post(`${HOST}/whtransaction/inventory-check`, data, {
+        const response = await axios.post(`${HOST}/whtransaction/inventory-check/${iventoryId}`, data, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

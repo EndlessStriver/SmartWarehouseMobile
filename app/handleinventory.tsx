@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import ModalAddShelfInventory from "./inventory/ModalAddShelfInventory";
 import FormatDate from "@/unit/FormatDate";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import GetIventoryById, { Transaction } from "@/service/GetIventoryById";
+import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
+import GetShelfOccupiedByLocationId from "@/service/GetShelfOccupiedByLocationId";
 import CreateInventoryAPI from "@/service/CreateInventoryAPI";
-import { useNavigation } from "expo-router";
-import { AxiosError } from "axios";
 
 interface TypeSectionList {
     locationId: string;
@@ -20,26 +21,56 @@ export interface ShelfInventory {
     data: TypeSectionList[]
 }
 
-const CreateInventory: React.FC = () => {
+const HandleInventory: React.FC = () => {
 
-    const navigation = useNavigation();
-    const [modalVisiable, setModalVisiable] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const { iventoryId } = useLocalSearchParams<{ iventoryId: string }>();
     const [shelfList, setShelfList] = useState<ShelfInventory[]>([]);
-    const [note, setNote] = useState("");
     const [loading, setLoading] = useState(false);
+    const [transaction, setTransaction] = useState<Transaction | null>(null);
 
-    const handleAddShelf = (data: ShelfInventory) => {
-        if (shelfList.find((shelf) => shelf.title.label === data.title.label)) {
-            Alert.alert("Thông báo", "Kệ đã tồn tại...");
-            return;
-        }
-        setShelfList([...shelfList, data]);
-    }
-
-    const removeShelf = (shelfName: string) => {
-        const newShelfList = shelfList.filter((shelf) => shelf.title.label !== shelfName);
-        setShelfList(newShelfList);
-    }
+    useEffect(() => {
+        setLoading(true);
+        GetIventoryById(iventoryId)
+            .then((response) => {
+                setTransaction(response);
+                response.inventory.map((shelf) => {
+                    GetShelfOccupiedByLocationId(shelf.shelves.id)
+                        .then((response) => {
+                            setShelfList((prev) => [...prev, {
+                                title: { label: response[0].locationCode.split("-")[0], value: shelf.shelves.id },
+                                data: response.filter((location) => location.quantity !== 0).map((item) => {
+                                    return {
+                                        locationId: item.id,
+                                        locationCode: item.locationCode,
+                                        productName: item.skus.productDetails.product.name,
+                                        unit: item.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name || "",
+                                        currentQuantity: item.quantity + "",
+                                        iventoryQuantity: item.quantity + "",
+                                    }
+                                })
+                            }]);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            Alert.alert("Thông báo", "Không tìm thấy kệ hàng nào tương ứng với mã vạch này");
+                        });
+                })
+            })
+            .then(() => {
+                return GetAccountInformationCurrent();
+            })
+            .then((response) => {
+                setUser(response);
+            })
+            .catch((error) => {
+                console.log(error);
+                Alert.alert("Thông báo", "Không tìm thấy thông tin phiếu kiểm kho");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
 
     const validateNumber = (value: string) => {
         return /^[0-9]*$/.test(value);
@@ -58,50 +89,43 @@ const CreateInventory: React.FC = () => {
     }
 
     const handleSubmit = () => {
-        if (shelfList.length === 0) {
-            Alert.alert("Thông báo", "Chưa có thông tin kiểm kê...");
-            return;
-        }
         if (!checkQuantity()) {
-            Alert.alert("Thông báo", "Số lượng kiểm kê không hợp lệ...");
+            Alert.alert("Thông báo", "Vui lòng nhập số lượng kiểm kê hợp lệ");
             return;
         }
-        setLoading(true);
-        CreateInventoryAPI({
-            note: note,
-            shelfInventory: shelfList.map((shelf) => {
-                return {
-                    shelfId: shelf.title.value,
-                    locationInventory: shelf.data.map((data) => {
-                        return {
-                            locationId: data.locationId,
-                            avaliableQuantity: Number(data.iventoryQuantity || "0"),
-                        };
-                    }),
-                };
-            }),
-        })
-            .then(() => {
-                Alert.alert("Thông báo", "Tạo phiếu kiểm kê thành công");
-                navigation.reset({
-                    index: 1,
-                    routes: [
-                        { name: "home" as never },
-                        { name: "inventory" as never }
-                    ],
+        CreateInventoryAPI(
+            iventoryId,
+            {
+                note: transaction?.note || "",
+                shelfInventory: shelfList.map((shelf) => {
+                    return {
+                        shelfId: shelf.title.value,
+                        locationInventory: shelf.data.map((data) => {
+                            return {
+                                locationId: data.locationId,
+                                avaliableQuantity: Number(data.iventoryQuantity)
+                            }
+                        })
+                    }
                 })
+            }
+        )
+            .then(() => {
+                Alert.alert("Thông báo", "Kiểm kê thành công");
+                router.replace("/tabs/inventory");
             })
             .catch((error) => {
-                // if ((error as AxiosError).response) {
-                //     const axiosError = error as AxiosError;
-                //     console.log('Server Error:', axiosError.response);
-                // }
                 console.log(error);
-                Alert.alert("Thông báo", "Có lỗi xảy ra, vui lòng thử lại sau");
-            })
-            .finally(() => {
-                setLoading(false);
+                Alert.alert("Thông báo", "Kiểm kê thất bại");
             });
+    }
+
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Text>Đang tải dữ liệu...</Text>
+            </View>
+        );
     }
 
     return (
@@ -115,13 +139,29 @@ const CreateInventory: React.FC = () => {
                     borderColor: "#ecf0f1",
                 }}
             >
-                <Text>
-                    <Text style={{
-                        fontWeight: "bold",
-                        fontSize: 14
-                    }}>Ngày kiểm kê: </Text>
-                    {FormatDate(new Date().toString())}
-                </Text>
+                <View>
+                    <Text style={{ marginBottom: 5 }}>
+                        <Text style={{
+                            fontWeight: "bold",
+                            fontSize: 14
+                        }}>Người kiểm kê: </Text>
+                        {user?.fullName}
+                    </Text>
+                    <Text style={{ marginBottom: 5 }}>
+                        <Text style={{
+                            fontWeight: "bold",
+                            fontSize: 14
+                        }}>Ngày kiểm kê: </Text>
+                        {FormatDate(new Date().toString())}
+                    </Text>
+                    <Text style={{ marginBottom: 5 }}>
+                        <Text style={{
+                            fontWeight: "bold",
+                            fontSize: 14
+                        }}>Ghi chú: </Text>
+                        {transaction?.note || "Không có ghi chú"}
+                    </Text>
+                </View>
                 <TouchableOpacity
                     disabled={loading}
                     onPress={() => {
@@ -148,51 +188,12 @@ const CreateInventory: React.FC = () => {
                         opacity: (shelfList.length === 0 || loading) ? 0.5 : 1
                     }}
                 >
-                    <Text style={{ color: "white", textAlign: "center", fontSize: 12, fontWeight: "bold" }}>{
-                        loading ? "Đang xử lý..." : "Hoàn Thành"
+                    <Text style={{ color: "white", textAlign: "center", fontSize: 14, fontWeight: "bold" }}>{
+                        loading ? "Đang xử lý..." : "Xác nhận"
                     }</Text>
                 </TouchableOpacity>
             </View>
-            <TextInput
-                style={{
-                    borderWidth: 1,
-                    width: '100%',
-                    marginBottom: 10,
-                    borderColor: "gray",
-                    color: "gray",
-                    height: 50,
-                    padding: 15,
-                    textAlignVertical: 'top',
-                    borderRadius: 10,
-                    marginTop: 10
-                }}
-                value={note}
-                onChange={(e) => setNote(e.nativeEvent.text)}
-                placeholder="Nhập ghi chú nếu có..."
-            />
-            <View
-                style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    borderWidth: 1,
-                    alignItems: "center",
-                    borderColor: "#ecf0f1",
-                    marginBottom: 10,
-
-                }}
-            >
-                <Text style={{ fontWeight: "600", fontSize: 18, color: "#2980b9" }}>Danh Sách Kiểm Kê</Text>
-                <TouchableOpacity
-                    onPress={() => setModalVisiable(true)}
-                    style={{
-                        backgroundColor: "#3498db",
-                        padding: 5,
-                        borderRadius: 5,
-                    }}
-                >
-                    <Text style={{ color: "white", textAlign: "center", fontSize: 12, fontWeight: "bold" }}>Thêm +</Text>
-                </TouchableOpacity>
-            </View>
+            <Text style={{ fontWeight: "600", fontSize: 18, color: "#2980b9", marginBottom: 10 }}>Danh Sách Kiểm Kê</Text>
             {
                 shelfList.length === 0 ?
                     <Text style={{
@@ -263,32 +264,10 @@ const CreateInventory: React.FC = () => {
                             </View>
                         )}
                         renderSectionHeader={({ section: { title } }) => (
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                }}
-                            >
-                                <Text style={styles.sectionHeader}>Kệ {title.label}</Text>
-                                <TouchableOpacity
-                                    onPress={() => removeShelf(title.label)}
-                                    style={{
-                                        position: "absolute",
-                                        right: 10,
-                                        top: 10,
-                                    }}
-                                >
-                                    <Text style={{ color: "red", fontWeight: "bold" }}>Xóa</Text>
-                                </TouchableOpacity>
-                            </View>
+                            <Text style={styles.sectionHeader}>Kệ {title.label}</Text>
                         )}
                     />
             }
-            <ModalAddShelfInventory
-                modalVisiable={modalVisiable}
-                setModalVisiable={setModalVisiable}
-                addShelf={handleAddShelf}
-            />
         </View>
     );
 }
@@ -338,4 +317,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CreateInventory;
+export default HandleInventory;

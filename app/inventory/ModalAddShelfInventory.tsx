@@ -3,7 +3,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Camera, CameraView } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Alert, Button, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ShelfInventory } from "../createinventory";
+import { ShelfInventory } from "../handleinventory";
 
 interface ModalAddShelfInventoryProps {
     modalVisiable: boolean;

@@ -36,6 +36,8 @@ const ModalAddProductCheck: React.FC<ModalAddProductCheckProps> = (props) => {
                 {props.receiveOrder ? (
                     <FlatList
                         style={styles.list}
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
                         data={props.receiveOrder.receiveItems}
                         keyExtractor={(item) => item.id}
                         renderItem={({ item }) => (

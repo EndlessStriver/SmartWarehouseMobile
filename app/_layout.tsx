@@ -57,10 +57,10 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="createinventory"
+        name="handleinventory"
         options={{
           headerShown: true,
-          title: "Tạo Phiếu Kiểm Kê",
+          title: "Xử Lý Kiểm Kê",
         }}
       />
       <Stack.Screen

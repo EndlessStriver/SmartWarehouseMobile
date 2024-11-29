@@ -1,17 +1,34 @@
-import GetInventories, { Transaction } from "@/service/GetInventories";
+import GetInventories, { InventoryTransaction } from "@/service/GetInventories";
 import FormatDate from "@/unit/FormatDate";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useNavigation } from "expo-router";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const Inventory: React.FC = () => {
-    const [inventories, setInventories] = useState<Transaction[]>([]);
+
+    const navigation = useNavigation();
+    const [tabBarBageNumber, setTabBarBageNumber] = useState(0);
+    const [inventories, setInventories] = useState<InventoryTransaction[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            tabBarBadgeStyle: {
+                color: 'white',
+                backgroundColor: 'red',
+            },
+            tabBarBadge: tabBarBageNumber !== 0 ? tabBarBageNumber : null,
+
+        });
+    }, [navigation, tabBarBageNumber]);
 
     useEffect(() => {
         setLoading(true);
         GetInventories()
-            .then((data) => setInventories(data.data))
+            .then((data) => {
+                setInventories(data.data)
+                setTabBarBageNumber(data.pending);
+            })
             .catch((error) => console.log(error))
             .finally(() => setLoading(false));
     }, []);
@@ -25,27 +42,46 @@ const Inventory: React.FC = () => {
                     data={inventories}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.card}
+                        <TouchableOpacity
+                            style={
+                                [
+                                    styles.card,
+                                    { backgroundColor: item.inventory[0].status === "PENDING" ? "#f1c40f" : (item.inventory[0].status === "COMPLETED" ? "#2ecc71" : "#e74c3c") }
+                                ]
+                            }
                             onPress={() => {
-                                router.push({
-                                    pathname: "/iventorydetail",
-                                    params: {
-                                        iventoryId: item.id,
-                                    }
-                                });
+                                if (item.inventory[0].status === "PENDING") {
+                                    router.push({
+                                        pathname: "/handleinventory",
+                                        params: {
+                                            iventoryId: item.id,
+                                        }
+                                    });
+                                } else {
+                                    router.push({
+                                        pathname: "/iventorydetail",
+                                        params: {
+                                            iventoryId: item.id,
+                                        }
+                                    });
+                                }
                             }}
                         >
-                            <Text style={styles.label}>
+                            <Text style={[styles.label, { color: item.inventory[0].status === "CANCELLED" ? "black" : "#7f8c8d" }]}>
                                 <Text style={styles.labelBold}>Mã phiếu: </Text>
                                 {item.id}
                             </Text>
-                            <Text style={styles.label}>
+                            <Text style={[styles.label, { color: item.inventory[0].status === "CANCELLED" ? "black" : "#7f8c8d" }]}>
                                 <Text style={styles.labelBold}>Ngày tạo: </Text>
                                 {FormatDate(item.create_at)}
                             </Text>
-                            <Text style={styles.label}>
+                            <Text style={[styles.label, { color: item.inventory[0].status === "CANCELLED" ? "black" : "#7f8c8d" }]}>
                                 <Text style={styles.labelBold}>Ghi chú: </Text>
                                 {item.note || "Không có ghi chú"}
+                            </Text>
+                            <Text style={[styles.label, { color: item.inventory[0].status === "CANCELLED" ? "black" : "#7f8c8d" }]}>
+                                <Text style={styles.labelBold}>Trạng thái: </Text>
+                                {item.inventory[0].status === "PENDING" ? "Chờ xử lý" : (item.inventory[0].status === "COMPLETED" ? "Đã xử lý" : "Đã hủy")}
                             </Text>
                         </TouchableOpacity>
                     )}
@@ -79,7 +115,6 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     card: {
-        backgroundColor: "#fff",
         borderRadius: 10,
         padding: 15,
         marginBottom: 10,
@@ -93,7 +128,6 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
-        color: "#7f8c8d",
         marginBottom: 5,
     },
     labelBold: {
