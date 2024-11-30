@@ -87,7 +87,7 @@ interface Shelf {
 }
 
 
-const GetInventories = async (limit?: number, offset?: number, order?: string): Promise<InventoryData> => {
+const GetInventories = async (offset?: number, limit?: number, order?: string): Promise<InventoryData> => {
     try {
         const HOST = process.env.EXPO_PUBLIC_API_URL;
         const token = await getData('token');

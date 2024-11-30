@@ -14,7 +14,6 @@ const OrderExport: React.FC = () => {
 
     const onRefresh = () => {
         setRefreshing(true);
-        setOrderExports([]);
         setPage(1);
         setHasMore(true);
         setRefreshing(false);
@@ -82,6 +81,10 @@ const OrderExport: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            {
+                orderExports.length === 0 &&
+                <Text style={styles.title}>Không có dữ liệu</Text>
+            }
             <FlatList
                 data={orderExports}
                 showsHorizontalScrollIndicator={false}

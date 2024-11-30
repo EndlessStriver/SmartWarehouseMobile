@@ -15,7 +15,6 @@ const StockEntry: React.FC = () => {
     const [tabBarBageNumber, setTabBarBageNumber] = useState(0);
     const onRefresh = () => {
         setRefreshing(true);
-        setReceives([]);
         setPage(1);
         setHasMore(true);
         setRefreshing(false);

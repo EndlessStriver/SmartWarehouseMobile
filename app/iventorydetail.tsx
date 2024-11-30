@@ -63,6 +63,8 @@ const InventoryDetail = () => {
                 </Text>
             </View>
             <SectionList
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 sections={convertDataToSectionListData()}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (

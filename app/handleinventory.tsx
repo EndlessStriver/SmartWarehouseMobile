@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import FormatDate from "@/unit/FormatDate";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import GetIventoryById, { Transaction } from "@/service/GetIventoryById";
 import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
 import GetShelfOccupiedByLocationId from "@/service/GetShelfOccupiedByLocationId";
@@ -37,21 +37,24 @@ const HandleInventory: React.FC = () => {
                 response.inventory.map((shelf) => {
                     GetShelfOccupiedByLocationId(shelf.shelves.id)
                         .then((response) => {
-                            setShelfList((prev) => [...prev, {
-                                title: { label: response[0].locationCode.split("-")[0], value: shelf.shelves.id },
-                                data: response.filter((location) => location.quantity !== 0).map((item) => {
-                                    return {
-                                        locationId: item.id,
-                                        locationCode: item.locationCode,
-                                        productName: item.skus.productDetails.product.name,
-                                        unit: item.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name || "",
-                                        currentQuantity: item.quantity + "",
-                                        iventoryQuantity: item.quantity + "",
-                                    }
-                                })
-                            }]);
+                            if (response.length > 0) {
+                                setShelfList((prev) => [...prev, {
+                                    title: { label: response[0].locationCode.split("-")[0], value: shelf.shelves.id },
+                                    data: response.filter((location) => location.quantity !== 0).map((item) => {
+                                        return {
+                                            locationId: item.id,
+                                            locationCode: item.locationCode,
+                                            productName: item.skus.productDetails.product.name,
+                                            unit: item.skus.productDetails.product.units.find((unit) => unit.isBaseUnit)?.name || "",
+                                            currentQuantity: item.quantity + "",
+                                            iventoryQuantity: item.quantity + "",
+                                        }
+                                    })
+                                }]);
+                            }
                         })
                         .catch((error) => {
+
                             console.log(error);
                             Alert.alert("Thông báo", "Không tìm thấy kệ hàng nào tương ứng với mã vạch này");
                         });

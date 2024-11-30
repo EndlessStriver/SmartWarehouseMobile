@@ -18,8 +18,6 @@ interface InventoryData {
 
 
 const CreateInventoryAPI = async (iventoryId: string, data: InventoryData): Promise<void> => {
-    console.log(iventoryId);
-    console.log(data);
     try {
         const HOST = process.env.EXPO_PUBLIC_API_URL;
         const token = await getData('token');
