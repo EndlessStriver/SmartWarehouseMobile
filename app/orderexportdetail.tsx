@@ -2,7 +2,7 @@ import CancelOrderExportById from "@/service/CancelOrderExportById";
 import ConfirmOrderExportById from "@/service/ConfirmOrderExportById";
 import GetOrderExportById, { ExportOrder } from "@/service/GetOrderExportById";
 import FormatDate from "@/unit/FormatDate";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -27,13 +27,7 @@ const OrderExportDetail = () => {
         CancelOrderExportById(orderExportId)
             .then(() => {
                 Alert.alert('Thành công', 'Hủy phiếu xuất kho thành công');
-                navigate.reset({
-                    index: 1,
-                    routes: [
-                        { name: "home" as never },
-                        { name: "orderexport" as never }
-                    ]
-                })
+                router.replace("/tabs/orderexport")
             })
             .catch((err) => {
                 console.log(err);
@@ -45,13 +39,7 @@ const OrderExportDetail = () => {
         ConfirmOrderExportById(orderExportId)
             .then(() => {
                 Alert.alert('Thành công', 'Xác nhận xuất kho thành công');
-                navigate.reset({
-                    index: 1,
-                    routes: [
-                        { name: "home" as never },
-                        { name: "orderexport" as never }
-                    ]
-                })
+                router.replace("/tabs/orderexport")
             })
             .catch((err) => {
                 console.log(err);

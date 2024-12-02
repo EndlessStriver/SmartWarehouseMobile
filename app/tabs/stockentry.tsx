@@ -13,10 +13,13 @@ const StockEntry: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [tabBarBageNumber, setTabBarBageNumber] = useState(0);
+    const [resset, setResset] = useState(false);
+
     const onRefresh = () => {
         setRefreshing(true);
         setPage(1);
         setHasMore(true);
+        setResset(!resset);
         setRefreshing(false);
     };
 
@@ -68,7 +71,7 @@ const StockEntry: React.FC = () => {
                     });
             }
         }
-    }, [page]);
+    }, [page, resset]);
 
     const loadMore = () => {
         if (!loading && hasMore) {

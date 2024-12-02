@@ -76,10 +76,10 @@ const InventoryDetail = () => {
                             {item.productName}
                         </Text>
                         <Text style={styles.itemText} numberOfLines={2} ellipsizeMode="tail">
-                            {item.quantityBegin}
+                            {item.quantityReal}
                         </Text>
                         <Text style={styles.itemText} numberOfLines={2} ellipsizeMode="tail">
-                            {item.quantityReal}
+                            {item.quantityBegin}
                         </Text>
                         <Text style={styles.itemText} numberOfLines={2} ellipsizeMode="tail">
                             {item.quantity}

@@ -11,10 +11,12 @@ const OrderExport: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [resset, setResset] = useState(false);
 
     const onRefresh = () => {
         setRefreshing(true);
         setPage(1);
+        setResset(!resset);
         setHasMore(true);
         setRefreshing(false);
     };
@@ -55,7 +57,7 @@ const OrderExport: React.FC = () => {
                     setLoading(false);
                 });
         }
-    }, [page]);
+    }, [page, resset]);
 
     useLayoutEffect(() => {
         navigation.setOptions({

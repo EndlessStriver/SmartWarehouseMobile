@@ -13,10 +13,12 @@ const Inventory: React.FC = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [resset, setResset] = useState(false);
 
     const onRefresh = () => {
         setRefreshing(true);
         setPage(1);
+        setResset(!resset);
         setHasMore(true);
         setRefreshing(false);
     };
@@ -58,7 +60,7 @@ const Inventory: React.FC = () => {
                 .catch((error) => console.log(error))
                 .finally(() => setLoading(false));
         }
-    }, [page, refreshing]);
+    }, [page, resset]);
 
     const loadMore = () => {
         if (!loading && hasMore) {
