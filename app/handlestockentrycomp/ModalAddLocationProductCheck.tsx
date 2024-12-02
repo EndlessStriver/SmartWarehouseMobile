@@ -52,7 +52,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                             value: item.locationId,
                             lable: item.locationCode,
                             maxQuantityInbound: item.maxQuantityInbound,
-                            inputQuantity: item.maxQuantityInbound.toString(),
+                            inputQuantity: item.maxQuantityInbound < (props.receiveItem?.quantity || 0) ? item.maxQuantityInbound.toString() : (props.receiveItem?.quantity || 0).toString(),
                             isCheck: false,
                         })))
                     })
@@ -134,6 +134,8 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
             })
             if (check === false) {
                 setLocationSelect([...locationSelect, location]);
+            } else {
+                Alert.alert("Lỗi", "Vị trí này đã được chọn");
             }
         }
     }
@@ -241,11 +243,19 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                         }}
                     >
                         <TouchableOpacity
+                            style={{
+                                opacity: (numberQuantityCheck === "" || Number(numberQuantityCheck) <= 0) ? 0.5 : 1
+                            }}
+                            disabled={numberQuantityCheck === "" || Number(numberQuantityCheck) <= 0}
                             onPress={() => setModalRecomentAddProductToLocation(true)}
                         >
                             <Text style={{ color: "#e67e22", fontWeight: "bold" }}>Đề xuất</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
+                            style={{
+                                opacity: (numberQuantityCheck === "" || Number(numberQuantityCheck) <= 0) ? 0.5 : 1
+                            }}
+                            disabled={numberQuantityCheck === "" || Number(numberQuantityCheck) <= 0}
                             onPress={() => setModalVisible(true)}
                         >
                             <Text style={{ color: "#3498db", fontWeight: "bold" }}>Tùy chỉnh</Text>
@@ -255,6 +265,8 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                 {
                     locationSelect.length > 0 ?
                         <FlatList
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
                             style={styles.flatList}
                             data={locationSelect}
                             keyExtractor={(item) => item.value}
@@ -291,9 +303,10 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
             <ModalRecomentAddProductToLocation
                 isModalVisible={isModalRecomentAddProductToLocation}
                 setModalVisible={() => setModalRecomentAddProductToLocation(false)}
-                recomentLocation={filterLocation()}
+                recomentLocation={locations}
                 setLocationsSelected={setLocationSelect}
                 numberQuantityCheck={numberQuantityCheck}
+                locationIsSelect={locationSelect}
             />
         </Modal>
 
@@ -339,6 +352,7 @@ const styles = StyleSheet.create({
         color: "#FFFFFF",
         fontWeight: "600",
         textAlign: "center",
+        marginTop: 10,
     },
     picker: {
         backgroundColor: "#ECF0F1",

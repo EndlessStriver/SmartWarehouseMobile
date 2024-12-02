@@ -26,15 +26,17 @@ interface ModalRecomentAddProductToLocationProps {
     recomentLocation: LocationType[];
     setLocationsSelected: (value: LocationType[]) => void;
     numberQuantityCheck: string;
+    locationIsSelect: LocationType[]
 }
 
 const ModalRecomentAddProductToLocation: React.FC<ModalRecomentAddProductToLocationProps> = (props) => {
 
     const [myLocationsSelected, setMyLocationsSelected] = React.useState<LocationType[]>([]);
+    const [reset, setReset] = React.useState(false);
 
     React.useEffect(() => {
-        setMyLocationsSelected(props.recomentLocation);
-    }, [props.recomentLocation]);
+        setMyLocationsSelected(JSON.parse(JSON.stringify(props.recomentLocation)));
+    }, [props.recomentLocation, reset]);
 
     const setCheckLocation = (value: string) => {
         let newLocation = [...myLocationsSelected];
@@ -58,15 +60,17 @@ const ModalRecomentAddProductToLocation: React.FC<ModalRecomentAddProductToLocat
             Alert.alert("Lỗi", "Số lượng nhập không hợp lệ");
             return
         }
+        if (myLocationsSelected.some((localtion) => localtion.isCheck && Number(localtion.inputQuantity) > localtion.maxQuantityInbound)) {
+            Alert.alert("Lỗi", "Số lượng nhập vào không được lớn hơn số lượng chứa tối đa");
+            return;
+        }
         if (myLocationsSelected.filter((localtion) => localtion.isCheck).reduce((acc, location) => acc + (Number(location.inputQuantity)), 0) > Number(props.numberQuantityCheck)) {
             Alert.alert("Lỗi", "Số lượng nhập vào không được lớn hơn số lượng đã kiểm tra");
             return;
         }
-
         const locationsSelected = myLocationsSelected.filter(
             (location) => location.isCheck
         );
-
         props.setLocationsSelected(locationsSelected);
         props.setModalVisible(false);
     }
@@ -82,7 +86,10 @@ const ModalRecomentAddProductToLocation: React.FC<ModalRecomentAddProductToLocat
                 <View style={styles.modalContainer}>
                     <View style={styles.header}>
                         <Text style={styles.headerText}>Vị Trí Đề Xuất</Text>
-                        <TouchableOpacity onPress={() => props.setModalVisible(false)}>
+                        <TouchableOpacity onPress={() => {
+                            setReset(!reset);
+                            props.setModalVisible(false)
+                        }}>
                             <FontAwesome name="close" size={24} color="#555" />
                         </TouchableOpacity>
                     </View>

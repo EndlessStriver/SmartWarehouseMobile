@@ -28,8 +28,10 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
     const [locationIsChoose, setLocationIsChoose] = useState<StorageLocation | null>(null);
 
     useEffect(() => {
-        setInputQuantity(props.quantity - getQuantityIsAddLocation() + "");
-    }, [props.quantity, props.locationIsSelect])
+        if (locationIsChoose) {
+            setInputQuantity((getQuantityIsUse(locationIsChoose) < (props.quantity - getQuantityIsAddLocation()) ? getQuantityIsUse(locationIsChoose) : props.quantity - getQuantityIsAddLocation()) + "");
+        }
+    }, [props.quantity, props.locationIsSelect, locationIsChoose])
 
     useEffect(() => {
         if (props.shelf?.id) {
@@ -59,13 +61,13 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
 
     const getVolumn = () => {
         let dimension = props.receiveItem?.sku.dimension;
-        return dimension?.split("x").reduce((acc, cur) => acc * Number(cur), 1) || 0;
+        return dimension?.split("x").reduce((acc, cur) => acc * Number(cur), 1) || 1;
     }
 
     const getQuantityIsUse = (location: StorageLocation) => {
         let quantityIsUseVolumn = (Number(location.maxCapacity) - Number(location.currentCapacity)) / (getVolumn() * valueConvertUnit);
         let quantityIsUseWeight = (Number(location.maxWeight) - Number(location.currentWeight)) / (Number(props.receiveItem?.sku.weight) * valueConvertUnit);
-        return Math.min(quantityIsUseVolumn, quantityIsUseWeight);
+        return Math.min(quantityIsUseVolumn <= 0 ? 0 : Math.floor(quantityIsUseVolumn), quantityIsUseWeight <= 0 ? 0 : Math.floor(quantityIsUseWeight));
     }
 
     const isChoose = (location: StorageLocation) => {
@@ -74,9 +76,7 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
     }
 
     const isDisabled = (location: StorageLocation) => {
-        let quantityIsUse = getQuantityIsUse(location);
         if (isChoose(location)) return false;
-        if (quantityIsUse < (props.quantity * valueConvertUnit)) return true;
         if (location.occupied && props.receiveItem?.product.id !== location.skus?.productDetails?.product?.id) return true;
     }
 
@@ -167,7 +167,6 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                             <TouchableOpacity
                                 onPress={() => {
                                     setShowModal(false);
-                                    setInputQuantity("");
                                 }}
                                 style={[styles.modalButton, styles.cancelButton]}
                             >
@@ -177,6 +176,10 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                                 onPress={() => {
                                     if (inputQuantity === "") {
                                         Alert.alert("Lỗi", "Vui lòng nhập số lượng");
+                                        return;
+                                    }
+                                    if (Number(inputQuantity) <= 0) {
+                                        Alert.alert("Lỗi", "Số lượng nhập phải lớn hơn 0");
                                         return;
                                     }
                                     if (Number(inputQuantity) > Math.floor(getQuantityIsUse(locationIsChoose || locations[0]))) {
@@ -195,8 +198,6 @@ const ModalOptionLocation: React.FC<ModalOptionLocationProps> = (props) => {
                                         isCheck: true,
                                     });
                                     setShowModal(false);
-                                    setInputQuantity("");
-                                    props.setModalVisible(false);
                                 }}
                                 style={[styles.modalButton, styles.confirmButton]}
                             >
