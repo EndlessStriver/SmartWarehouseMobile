@@ -140,6 +140,22 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
         }
     }
 
+    const addLocationInRecomend = (locations: LocationType[]) => {
+        if (locationSelect.length === 0) {
+            setLocationSelect(locations);
+            return;
+        }
+        if (locationSelect.length > 0) {
+            let newLocationSelect: LocationType[] = JSON.parse(JSON.stringify(locationSelect));
+            for (let location of locations) {
+                let exists = newLocationSelect.find((item) => item.value === location.value);
+                if (exists) exists.inputQuantity = location.inputQuantity;
+                else newLocationSelect.push(location);
+            }
+            setLocationSelect(newLocationSelect);
+        }
+    }
+
     const handleSubmit = () => {
         if (numberQuantityCheck === "" || !validateNumber(numberQuantityCheck)) {
             Alert.alert("Lỗi", "Số lượng kiểm tra không hợp lệ");
@@ -304,7 +320,7 @@ const ModalAddLocationProductCheck: React.FC<ModalAddLocationProductCheckProps> 
                 isModalVisible={isModalRecomentAddProductToLocation}
                 setModalVisible={() => setModalRecomentAddProductToLocation(false)}
                 recomentLocation={locations}
-                setLocationsSelected={setLocationSelect}
+                setLocationsSelected={addLocationInRecomend}
                 numberQuantityCheck={numberQuantityCheck}
                 locationIsSelect={locationSelect}
             />
