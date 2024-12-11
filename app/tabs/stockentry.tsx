@@ -1,5 +1,6 @@
 import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import FormatDate from "@/unit/FormatDate";
+import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -140,7 +141,7 @@ const StockEntry: React.FC = () => {
                             color: item.status === "PENDING" ? "#c0392b" : "#f39c12",
                             fontSize: 14
                         }}>
-                            {FormatDate(item.receiveDate)}
+                            {formatDateTimeVietNamHaveTime(item.create_at)}
                         </Text>
                         <Text style={{ fontWeight: "600", color: "#34495e", fontSize: 14 }}>{item.receiveBy}</Text>
                         <Text style={{

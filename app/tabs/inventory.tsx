@@ -1,5 +1,6 @@
 import GetInventories, { InventoryTransaction } from "@/service/GetInventories";
 import FormatDate from "@/unit/FormatDate";
+import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -126,7 +127,7 @@ const Inventory: React.FC = () => {
                                 </Text>
                                 <Text style={[styles.label, { color: item.inventory[0].status === "CANCELLED" ? "black" : "#7f8c8d" }]}>
                                     <Text style={styles.labelBold}>Ngày tạo: </Text>
-                                    {FormatDate(item.create_at)}
+                                    {formatDateTimeVietNamHaveTime(item.create_at)}
                                 </Text>
                                 <Text style={[styles.label, { color: item.inventory[0].status === "CANCELLED" ? "black" : "#7f8c8d" }]}>
                                     <Text style={styles.labelBold}>Ghi chú: </Text>

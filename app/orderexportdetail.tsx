@@ -2,6 +2,7 @@ import CancelOrderExportById from "@/service/CancelOrderExportById";
 import ConfirmOrderExportById from "@/service/ConfirmOrderExportById";
 import GetOrderExportById, { ExportOrder } from "@/service/GetOrderExportById";
 import FormatDate from "@/unit/FormatDate";
+import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -73,7 +74,7 @@ const OrderExportDetail = () => {
                     </Text>
                     <Text>
                         <Text style={{ fontWeight: "bold" }}>Ngày tạo: </Text>
-                        {FormatDate(orderExport?.create_at || "")}
+                        {formatDateTimeVietNamHaveTime(orderExport?.create_at || "")}
                     </Text>
                     <Text>
                         <Text style={{ fontWeight: "bold" }}>Người tạo: </Text>

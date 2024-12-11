@@ -1,5 +1,6 @@
 import GetIventoryById, { Transaction } from "@/service/GetIventoryById";
 import FormatDate from "@/unit/FormatDate";
+import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -55,7 +56,7 @@ const InventoryDetail = () => {
                 </Text>
                 <Text style={styles.detailText}>
                     <Text style={styles.label}>Ngày lập: </Text>
-                    {FormatDate(transaction?.transactionDate || "")}
+                    {formatDateTimeVietNamHaveTime(transaction?.transactionDate || "")}
                 </Text>
                 <Text style={styles.detailText}>
                     <Text style={styles.label}>Ghi chú: </Text>

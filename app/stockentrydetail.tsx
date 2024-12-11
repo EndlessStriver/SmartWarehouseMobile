@@ -1,5 +1,6 @@
 import GetReceiveCheckByStockEntryId, { Receipt } from "@/service/GetReceiveCheckByStockEntryId";
 import FormatDate from "@/unit/FormatDate";
+import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
@@ -38,7 +39,7 @@ const StockEntryDetail = () => {
                         </Text>
                         <Text>
                             <Text style={styles.fontweight} >Ngày tạo: </Text>
-                            {FormatDate(receiveCheck.create_at)}
+                            {formatDateTimeVietNamHaveTime(receiveCheck.create_at)}
                         </Text>
                         <Text>
                             <Text style={styles.fontweight} >Người lập: </Text>

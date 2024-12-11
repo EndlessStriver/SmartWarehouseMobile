@@ -1,4 +1,5 @@
 import GetOrderExports, { ExportOrder } from "@/service/GetOrderExports";
+import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -107,7 +108,7 @@ const OrderExport: React.FC = () => {
                         style={[styles.orderItem, getStatusStyle(item.status)]}
                     >
                         <Text style={styles.orderCode}>{item.exportCode}</Text>
-                        <Text style={styles.orderDate}>{item.exportDate}</Text>
+                        <Text style={styles.orderDate}>{formatDateTimeVietNamHaveTime(item.create_at)}</Text>
                         <Text style={styles.orderBy}>{item.exportBy}</Text>
                         <View style={styles.statusContainer}>
                             <Text style={styles.statusText}>
