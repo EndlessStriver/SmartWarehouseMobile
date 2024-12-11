@@ -2,34 +2,57 @@ import GetProductsByNameAndCodeAndSupplierName, { Product } from "@/service/GetP
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const WareHouse = () => {
 
     const [keyWord, setKeyWord] = useState<string>('');
     const [products, setProducts] = useState<Product[]>([]);
-    const [pagination, setPagination] = useState({
-        page: 1,
-        pageSize: 10,
-    });
+    const [loading, setLoading] = useState<boolean>(false);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(1);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const [resset, setResset] = useState<boolean>(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        setPage(1);
+        setHasMore(true);
+        setResset(!resset);
+        setRefreshing(false);
+    };
 
     useEffect(() => {
-        const id = setTimeout(() => {
-            GetProductsByNameAndCodeAndSupplierName(keyWord, pagination.pageSize, pagination.page)
+        setLoading(true);
+        if (hasMore) {
+            GetProductsByNameAndCodeAndSupplierName(keyWord, 10, page)
                 .then((response) => {
-                    setProducts(response.data);
-                    setPagination({
-                        page: response.offset,
-                        pageSize: response.limit,
-                    })
+                    if (response.data.length === 0) setHasMore(false);
+                    if (page === 1) {
+                        setProducts(response.data);
+                    } else {
+                        setProducts([...products, ...response.data]);
+                    }
                 })
                 .catch((error) => {
                     console.log(error);
                 })
-        }, 500);
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [keyWord, page, resset]);
 
-        return () => clearTimeout(id);
-    }, [keyWord, pagination.page, pagination.pageSize]);
+    const loadMore = () => {
+        if (!loading && hasMore) {
+            setPage((prePage) => prePage + 1);
+        }
+    }
+
+    const renderFooter = () => {
+        if (!loading) return null;
+        return <ActivityIndicator size="large" color="#3498db" />;
+    };
 
     return (
         <View style={styles.container}>
@@ -52,6 +75,12 @@ const WareHouse = () => {
                 showsVerticalScrollIndicator={false}
                 style={styles.list}
                 data={products}
+                onEndReachedThreshold={0.5}
+                onEndReached={loadMore}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                ListFooterComponent={renderFooter}
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         onPress={() => {

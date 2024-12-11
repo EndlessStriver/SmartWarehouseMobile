@@ -1,5 +1,4 @@
 import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
-import FormatDate from "@/unit/FormatDate";
 import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
