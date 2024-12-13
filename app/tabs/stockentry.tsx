@@ -144,6 +144,7 @@ const StockEntry: React.FC = () => {
                             shadowOpacity: 0.1,
                             shadowRadius: 5,
                             elevation: 3,
+                            opacity: (user?.role.name === "admin" || user?.role.name === "warehouse_manager") ? 1 : 0.7
                         }}
                         activeOpacity={0.7}
                     >

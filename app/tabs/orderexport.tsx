@@ -118,7 +118,7 @@ const OrderExport: React.FC = () => {
                             pathname: "/orderexportdetail",
                             params: { orderExportId: item.id }
                         })}
-                        style={[styles.orderItem, getStatusStyle(item.status)]}
+                        style={[styles.orderItem, getStatusStyle(item.status), { opacity: (user?.role.name === "admin" || user?.role.name === "warehouse_manager") ? 1 : 0.7 }]}
                     >
                         <Text style={styles.orderCode}>{item.exportCode}</Text>
                         <Text style={styles.orderDate}>{formatDateTimeVietNamHaveTime(item.create_at)}</Text>
