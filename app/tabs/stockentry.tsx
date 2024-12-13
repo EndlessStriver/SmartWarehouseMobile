@@ -1,3 +1,4 @@
+import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
 import GetReceives, { ReceiveRecord } from "@/service/GetReceives";
 import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { router, useNavigation } from "expo-router";
@@ -14,6 +15,7 @@ const StockEntry: React.FC = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [tabBarBageNumber, setTabBarBageNumber] = useState(0);
     const [resset, setResset] = useState(false);
+    const [user, setUser] = useState<User>();
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -47,7 +49,7 @@ const StockEntry: React.FC = () => {
                         }
                     })
                     .catch(error => {
-                        Alert.alert('Error', error.message);
+                        Alert.alert('Lỗi', error.message);
                     })
                     .finally(() => {
                         setLoading(false);
@@ -64,7 +66,7 @@ const StockEntry: React.FC = () => {
                         }
                     })
                     .catch(error => {
-                        Alert.alert('Error', error.message);
+                        Alert.alert('Lỗi', error.message);
                     })
                     .finally(() => {
                         setLoading(false);
@@ -72,6 +74,16 @@ const StockEntry: React.FC = () => {
             }
         }
     }, [page, resset]);
+
+    useEffect(() => {
+        GetAccountInformationCurrent()
+            .then((res) => {
+                setUser(res)
+            })
+            .catch((error) => {
+                Alert.alert('Lỗi', error.message)
+            })
+    }, [])
 
     const loadMore = () => {
         if (!loading && hasMore) {
@@ -103,6 +115,7 @@ const StockEntry: React.FC = () => {
                 }
                 renderItem={({ item }) => (
                     <TouchableOpacity
+                        disabled={(user?.role.name === "admin" || user?.role.name === "warehouse_manager") ? false : true}
                         onPress={() => {
                             if (item.status === "COMPLETERECEIVECHECK") {
                                 router.push({

@@ -1,3 +1,4 @@
+import GetAccountInformationCurrent, { User } from "@/service/GetAccountInformationCurrent";
 import GetOrderExports, { ExportOrder } from "@/service/GetOrderExports";
 import formatDateTimeVietNamHaveTime from "@/unit/FormatDateVNHaveTime";
 import { router, useNavigation } from "expo-router";
@@ -13,6 +14,7 @@ const OrderExport: React.FC = () => {
     const [hasMore, setHasMore] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [resset, setResset] = useState(false);
+    const [user, setUser] = useState<User>();
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -21,6 +23,16 @@ const OrderExport: React.FC = () => {
         setHasMore(true);
         setRefreshing(false);
     };
+
+    useEffect(() => {
+        GetAccountInformationCurrent()
+            .then((res) => {
+                setUser(res)
+            })
+            .catch((error) => {
+                Alert.alert('Lỗi', error.message)
+            })
+    }, [])
 
     useEffect(() => {
         if (page === 1) {
@@ -101,6 +113,7 @@ const OrderExport: React.FC = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <TouchableOpacity
+                        disabled={(user?.role.name === "admin" || user?.role.name === "warehouse_manager") ? false : true}
                         onPress={() => router.push({
                             pathname: "/orderexportdetail",
                             params: { orderExportId: item.id }
